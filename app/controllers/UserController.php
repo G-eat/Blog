@@ -8,7 +8,8 @@ class UserController extends Controller {
   public function login($msg = '') {
     if (isset($_POST['password'])) {
       $user = new User;
-      $user->logIn($_POST['password'],$_POST['username']);
+      $remmeberme = isset($_POST['remmember_me']);
+      $user->logIn($_POST['password'],$_POST['username'],$remmeberme);
       $this->view('user\index',[
         'page' => 'LogIn',
         'error' => $user->errors,

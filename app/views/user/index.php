@@ -29,7 +29,7 @@
         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password" required minlength=8 maxlength=20>
       </div>
       <div class="form-check mb-3">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <input type="checkbox" class="form-check-input" name="remmember_me" id="exampleCheck1">
         <label class="form-check-label" for="exampleCheck1">Remember me</label>
       </div>
       <button type="submit" class="btn btn-primary">LogIn</button>

@@ -93,17 +93,39 @@ class User extends Database {
   }
 
   // login post
-  public function logIn($password,$username) {
+  public function logIn($password,$username,$remmeberme) {
     User::validatelogin($password,$username);
     if ($this->errors == null) {
 
       session_regenerate_id(true);
 
       $_SESSION['user'] = $username;
+      if ($remmeberme == 1) {
+        USER::remmmemberLogin($_POST['username']);
+      }
       Controller::redirect('/user/login/success');
     } else {
       return $this->errors;
     }
+  }
+
+  // remmember me
+  public function remmmemberLogin($username) {
+    $token = new Token();
+    $hash_token = $token->getHash();
+
+    $expiry_token = time() + 60 * 60 * 24 * 7;
+
+    setcookie('remmember_me' , $hash_token , $expiry_token , '/');
+    $mysql = 'INSERT INTO `remmember_me`(`token_hash`,`user_name`,`expire_at`) VALUES(?,?,?)';
+    USER::remmember_me($mysql,$hash_token,$username,$expiry_token);
+  }
+
+  public function remmember_me($mysql,$hash_token,$username,$expiry_token) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$hash_token,$username,date('Y-m-d H:i:s' , $expiry_token)]);
+    Controller::redirect('/user/login');
   }
 
   // validate login
