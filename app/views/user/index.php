@@ -5,8 +5,16 @@
   // echo session_id();
 
   // echo session_id();
-  if (!isset($_SESSION['user'])){
- ?>
+  if (!isset($_SESSION['user'])){ ?>
+
+      <?php if ($this->data['msg'] == 'success'): ?>
+        <h5 class="alert alert-<?php echo $this->data['msg']; ?> container"><?php $this->data['msg'] == 'success' ?></h5>
+      <?php endif; ?>
+
+      <?php if ($this->data['msg'] == 'error'): ?>
+        <h5 class="alert alert-warning container">You're have confirm email.</h5>
+      <?php endif; ?>
+
 
   <div class="container mt-4">
     <h3 class="text-primary mb-3">LogIn</h3>

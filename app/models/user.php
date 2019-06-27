@@ -32,10 +32,10 @@ class User extends Database {
     return $data;
   }
 
-  public function insert($mysql , $username,$email,$password) {
+  public function insert($mysql , $username,$email,$password,$token) {
     self::connect();
     $query = self::$db->prepare($mysql);
-    $query->execute([$username,$email,$password]);
+    $query->execute([$username,$email,$password,$token]);
     // Controller::redirect('/user/login');
   }
 
@@ -49,16 +49,16 @@ class User extends Database {
 
   // register post
   public function save($password,$confirmpassword,$username,$email){
-    User::validateRegister($password,$confirmpassword,$username);
+    User::validateRegister($password,$confirmpassword,$username,$email);
     if ($this->errors == null) {
-      $mysql = 'INSERT INTO `users`(`username`,`email`,`password`) VALUES (?,?,?)';
+      $mysql = 'INSERT INTO `users`(`username`,`email`,`password`,`token`) VALUES (?,?,?,?)';
       $md5password = md5($password);
 
-      $random = User::generateRandomString();
+      $token = User::generateRandomString();
 
-      User::insert($mysql,$username,$email,$md5password);
+      User::insert($mysql,$username,$email,$md5password,$token);
 
-      User::sendMail($username,$email,$random);
+      User::sendMail($username,$email,$token);
 
       Controller::redirect('/user/login');
     } else {
@@ -67,12 +67,12 @@ class User extends Database {
   }
 
   // validate register
-  public function validateRegister($password,$confirmpassword,$username) {
-    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ?';
-    $data = USER::select($mysql,$username);
+  public function validateRegister($password,$confirmpassword,$username,$email) {
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? OR `email` = ?';
+    $data = USER::selectvalidate($mysql,$username,$email);
 
     if ($data[0] == 1) {
-      $this->errors[] ='This username is used.';
+      $this->errors[] ='This username and email is used.';
     }
 
     if ($confirmpassword === $password) {
@@ -82,6 +82,14 @@ class User extends Database {
     } else {
       $this->errors[] ='Not same Password-Confirm Password.';
     }
+  }
+
+  public function selectvalidate($mysql,$username,$email) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$username,$email]);
+    $data = $query->fetch();
+    return $data;
   }
 
   // login post
@@ -101,16 +109,16 @@ class User extends Database {
   // validate login
   public function validateLogin($password,$username) {
     $password1 = md5($password);
-    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? AND `password` = ?';
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? AND `password` = ? AND `token` =1';
     $data = USER::isRegister($mysql,$username,$password1);
 
     if ($data[0] !== '1' ) {
-      $this->errors[] ='Incorrect Password.';
+      $this->errors[] ='Incorrect Password or you not verify your email.';
     }
   }
 
   // sendMail
-  public function sendMail($username,$email,$random) {
+  public function sendMail($username,$email,$token) {
     $to = $email;
     $subject = "Confirm your Email";
 
@@ -120,17 +128,11 @@ class User extends Database {
       <title>HTML email</title>
       </head>
       <body>
-      <p>This email contains HTML Tags!</p>
-      <table>
-      <tr>
-      <th>Firstname</th>
-      <th>Lastname</th>
-      </tr>
-      <tr>
-      <td>John</td>
-      <td><a href='http://localhost/Blog/app/views/user/'>gogle</a></td>
-      </tr>
-      </table>
+      <p>This email is for confirmation your email in Blog!</p>
+      <br>
+      <p>Hello, <b>".$username.".</b></p>
+      <br>
+      <p>Please go to this link <span><a href='http://localhost:8000/user/confirmation/".$username.'/'.$token."'>here</a></span> and logIn.</p>
       </body>
     </html>
     ";
@@ -141,12 +143,74 @@ class User extends Database {
 
     // Additional headers
     $headers[] = 'From: Blog Registration <27dhjetor@gmail.com>';
-    $headers[] = 'Cc: 27dhjetore@gmail.com';
-    $headers[] = 'Bcc: 27dhjetore@gmail.com';
+    $headers[] = 'Cc: 27dhjetor@gmail.com';
+    $headers[] = 'Bcc: 27dhjetor@gmail.com';
 
     // Mail it
     mail($to, $subject, $message, implode("\r\n", $headers));
   }
+
+  //confirm email with link
+  public function confirmationToken($username,$token) {
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `token` = ? AND `username` = ?';
+    $data = USER::confirmToken($mysql,$token,$username);
+
+    if ($data[0] == 1) {
+      $mysql = 'UPDATE `users` SET `token`= 1 WHERE `username` = ?';
+      User::updatetokentrue($mysql,$username);
+    } else {
+      Controller::redirect('/user/login/error');
+    }
+  }
+
+  public function confirmToken($mysql,$token,$username) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$token,$username]);
+    return  $query->fetch();
+  }
+
+  public function updatetokentrue($mysql,$username) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$username]);
+
+    session_regenerate_id(true);
+
+    $_SESSION['user'] = $username;
+    Controller::redirect('/user/login/success');
+  }
+
+  // // confirma email with link
+  // public function confirmationemail($username,$password,$token) {
+  //   $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? AND `password` = ? AND `token` = ?';
+  //   $data = USER::confirm($mysql,$username,$password,$token);
+  //
+  //   if ($data[0] == 1) {
+  //     $mysql = 'UPDATE `users` SET `token`= 1 WHERE `username` = ?';
+  //     User::updatetokentrue($mysql,$username);
+  //   } else {
+  //     echo 'Error';
+  //   }
+  // }
+  //
+  // public function confirm($mysql,$username,$password,$token) {
+  //   self::connect();
+  //   $query = self::$db->prepare($mysql);
+  //   $query->execute([$username,$password,$token]);
+  //   return  $query->fetch();
+  // }
+  //
+  // public function updatetokentrue($mysql,$username) {
+  //   self::connect();
+  //   $query = self::$db->prepare($mysql);
+  //   $query->execute([$username]);
+  //
+  //   session_regenerate_id(true);
+  //
+  //   $_SESSION['user'] = $username;
+  //   Controller::redirect('/user/login/success');
+  // }
 
   // random text
   public function generateRandomString($length = 10) {

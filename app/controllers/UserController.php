@@ -5,20 +5,22 @@
  */
 class UserController extends Controller {
 
-  public function login() {
+  public function login($msg = '') {
     if (isset($_POST['password'])) {
       $user = new User;
       $user->logIn($_POST['password'],$_POST['username']);
       $this->view('user\index',[
         'page' => 'LogIn',
         'error' => $user->errors,
-        'username' => $_POST['username']
+        'username' => $_POST['username'],
+        'msg' => ''
       ]);
       $this->view->render();
     } else {
       $this->view('user\index',[
         'page' => 'LogIn',
-        'error' => ''
+        'error' => '',
+        'msg' => $msg
       ]);
       $this->view->render();
     }
@@ -44,6 +46,26 @@ class UserController extends Controller {
       }
   }
 
+  //confirm email with link
+  public function confirmation($username = '',$token='') {
+    if ($token == '' || $username == '') {
+      Controller::redirect('/user/login');
+    } else {
+      echo $username;
+      User::confirmationToken($username,$token);
+    }
+  }
+
+  //confirm email with form
+  // public function confirmationemail() {
+  //   $username = $_POST['username'];
+  //   $password = md5($_POST['passw']);
+  //   $token = $_POST['token'];
+  //
+  //   $isCoonfirmation = User::confirmationemail($username,$password,$token);
+  //   echo $isCoonfirmation;
+  // }
+
   public function logOut() {
     // If you are using session_name("something"), don't forget it now!
     session_start();
@@ -63,7 +85,7 @@ class UserController extends Controller {
 
     // Finally, destroy the session.
     session_destroy();
-    
+
     Controller::redirect('/user/login');
   }
 
