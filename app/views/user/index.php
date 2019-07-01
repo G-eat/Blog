@@ -12,7 +12,7 @@
       <?php endif; ?>
 
       <?php if ($this->data['msg'] == 'error'): ?>
-        <h5 class="alert alert-warning container">You're have confirm email.</h5>
+        <h5 class="alert alert-danger container">ERRROR.</h5>
       <?php endif; ?>
 
 
@@ -32,7 +32,10 @@
         <input type="checkbox" class="form-check-input" name="remmember_me" id="exampleCheck1">
         <label class="form-check-label" for="exampleCheck1">Remember me</label>
       </div>
-      <button type="submit" class="btn btn-primary">LogIn</button>
+      <div>
+        <a href='/user/reset'>Reset Password.</a>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">LogIn</button>
     </form>
   </div>
 

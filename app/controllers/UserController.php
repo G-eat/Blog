@@ -6,6 +6,7 @@
 class UserController extends Controller {
 
   public function login($msg = '') {
+    User::isSetRemmember_me();
     if (isset($_POST['password'])) {
       $user = new User;
       $remmeberme = isset($_POST['remmember_me']);
@@ -57,6 +58,26 @@ class UserController extends Controller {
     }
   }
 
+  public function reset() {
+    if (isset($_POST['email'])) {
+      User::reset();
+      $this->view('user\reset',[
+        'success' => 'Your get the info from email.'
+      ]);
+      $this->view->render();
+    } else {
+      $this->view('user\reset',[]);
+      $this->view->render();
+    }
+  }
+
+  public function resetpassword($token) {
+    $tokenExist = User::tokenExist($token);
+    if(!$tokenExist[2]) {
+      Controller::redirect('/user/login/error');
+    }
+  }
+
   //confirm email with form
   // public function confirmationemail() {
   //   $username = $_POST['username'];
@@ -66,6 +87,7 @@ class UserController extends Controller {
   //   $isCoonfirmation = User::confirmationemail($username,$password,$token);
   //   echo $isCoonfirmation;
   // }
+
 
   public function logOut() {
     // If you are using session_name("something"), don't forget it now!
@@ -83,6 +105,15 @@ class UserController extends Controller {
             $params["secure"], $params["httponly"]
         );
     }
+
+    // delete cookies
+    if (isset($_COOKIE['remmember_me'])) {
+      $mysql = 'DELETE FROM `remmember_me` WHERE `token_hash` LIKE ?';
+      $cookie = $_COOKIE['remmember_me'];
+      // delete  cookie
+      setcookie('remmember_me','',time() - 3600,'/');
+      User::delete($mysql,$cookie);
+      }
 
     // Finally, destroy the session.
     session_destroy();

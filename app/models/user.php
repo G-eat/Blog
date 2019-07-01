@@ -6,6 +6,24 @@
 class User extends Database {
   public $errors=[];
 
+  // if is set remmember me log in
+  public function isSetRemmember_me() {
+    $cookie = $_COOKIE['remmember_me'] ?? false;
+
+    if ($cookie) {
+      $mysql = 'SELECT * FROM `remmember_me` WHERE `token_hash` LIKE ?';
+      $data = User::select($mysql,$cookie);
+      $isExpireToken = User::isExpireToken($data['expire_at']);
+      if ( $data['user_name'] !== ''  && !$isExpireToken) {
+        $_SESSION['user'] = $data['user_name'];
+      }
+    }
+  }
+
+  public function isExpireToken($expire_at) {
+    return strtotime($expire_at) < time();
+  }
+
   // queries in database user
   public function select($mysql , $data = array()) {
     self::connect();
@@ -125,6 +143,7 @@ class User extends Database {
     self::connect();
     $query = self::$db->prepare($mysql);
     $query->execute([$hash_token,$username,date('Y-m-d H:i:s' , $expiry_token)]);
+    $_SESSION['user'] = $username;
     Controller::redirect('/user/login');
   }
 
@@ -233,6 +252,61 @@ class User extends Database {
   //   $_SESSION['user'] = $username;
   //   Controller::redirect('/user/login/success');
   // }
+
+  public function insertReset($mysql,$username,$token) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$username,$token]);
+  }
+
+  public function tokenExist($token) {
+    $mysql = 'SELECT * FROM `reset_password` WHERE `reset_token` LIKE ?';
+    return User::select($mysql,$token);
+  }
+
+  public function reset() {
+    $token = User::generateRandomString();
+    $mysql = 'SELECT * FROM `users` WHERE `email` LIKE ?';
+    $data = User::select($mysql,$_POST['email']);
+    if ($data[1]) {
+      User::sendResetMail($data[1],$data[2],$token);
+      $mysql = 'INSERT INTO `reset_password`(`user_name`,`reset_token`) VALUES(?,?)';
+      User::insertReset($mysql,$data[1],$token);
+    }
+  }
+
+  // sendResetMail
+  public function sendResetMail($username,$email,$token) {
+    $to = $email;
+    $subject = "Reset your Password";
+
+    $message = "
+    <html>
+      <head>
+      <title>HTML email</title>
+      </head>
+      <body>
+      <p>This email is for reseting your password in Blog!</p>
+      <br>
+      <p>Hello, <b>".$username.".</b></p>
+      <br>
+      <p>Please go to this link <span><a href='http://localhost:8000/user/resetpassword/".$token."'>here</a></span> to reset Password.</p>
+      </body>
+    </html>
+    ";
+
+    // To send HTML mail, the Content-type header must be set
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+
+    // Additional headers
+    $headers[] = 'From: Reset Password <27dhjetor@gmail.com>';
+    $headers[] = 'Cc: 27dhjetor@gmail.com';
+    $headers[] = 'Bcc: 27dhjetor@gmail.com';
+
+    // Mail it
+    mail($to, $subject, $message, implode("\r\n", $headers));
+  }
 
   // random text
   public function generateRandomString($length = 10) {
