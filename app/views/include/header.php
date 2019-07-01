@@ -27,7 +27,7 @@
         <?php if (isset($_SESSION['user'])){ ?>
           <a  href="/user/logout" class="p-2 text-dark">Logout</a>
          <?php } else { ?>
-           <a class="p-2 text-dark <?php echo ($this->data['page'] == 'LogIn') ? 'active':'' ?>" href="<?php echo ($this->data['page'] == 'LogIn') ? '#':'/user/login' ?>">Login</a>
+           <a class="p-2 text-dark <?php echo ($this->data['page'] == 'LogIn') ? 'active':'' ?>" href="/user/login">Login</a>
            <a class="p-2 text-dark <?php echo ($this->data['page'] == 'Register') ? 'active':'' ?>" href="<?php echo ($this->data['page'] == 'Register') ? '#':'/user/register' ?>">Register</a>
          <?php } ?>
       </nav>

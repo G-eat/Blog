@@ -261,7 +261,17 @@ class User extends Database {
 
   public function tokenExist($token) {
     $mysql = 'SELECT * FROM `reset_password` WHERE `reset_token` LIKE ?';
-    return User::select($mysql,$token);
+    $data = User::exist($mysql,$token);
+    return $data;
+  }
+
+  public function exist($mysql,$token)
+  {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$token]);
+    $data = $query->fetch();
+    return $data;
   }
 
   public function reset() {
@@ -290,7 +300,7 @@ class User extends Database {
       <br>
       <p>Hello, <b>".$username.".</b></p>
       <br>
-      <p>Please go to this link <span><a href='http://localhost:8000/user/resetpassword/".$token."'>here</a></span> to reset Password.</p>
+      <p>Please go to this link <span><a href='http://localhost:8000/user/resetpassword/".$token.'/'.$username."'>here</a></span> to reset Password.</p>
       </body>
     </html>
     ";
@@ -306,6 +316,30 @@ class User extends Database {
 
     // Mail it
     mail($to, $subject, $message, implode("\r\n", $headers));
+  }
+
+  // validate reset password passwords
+  public function validate($confirmpassword,$password) {
+    if ($confirmpassword === $password) {
+      if (strlen($password) >= 20 || strlen($password) <= 7) {
+        Controller::redirect('/user/login/error');
+      } else {
+        return md5($password);
+      }
+    }
+  }
+
+  public function updatePass($mysql,$validate,$username) {
+    self::connect();
+    echo $validate.'<br>';
+    echo $username;
+    $query = self::$db->prepare($mysql);
+    $query->execute([$validate,$username]);
+    var_dump($validate);
+    var_dump($username);
+
+
+    Controller::redirect('/user/login/ok');
   }
 
   // random text
