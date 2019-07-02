@@ -5,9 +5,10 @@
  */
 class UserController extends Controller {
 
-  public function select()
+  public function select($order)
   {
-    $data = Database::select1(['*'],['users'],null,null,null,null);
+    // $username = "'andi'";
+    $data = Database::select1(['*'],['users'],null,null,[' ORDER BY '.$order.' ASC'],[' LIMIT 1']);
     var_dump($data);
   }
 

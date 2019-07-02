@@ -49,31 +49,81 @@ class Database implements DBInterface {
         Controller::redirect('/users/login');
       } elseif($tables == 1) {
         $mysql .= $tables;
+        $mysql .= ' ';
       } else {
         $lastElement = end($tables);
         foreach ($tables as $table) {
           $mysql .= $table;
+          $mysql .= ' ';
           if (!$table == $lastElement) {
             $mysql .= ',';
           }
         }
       }
 
-      // if ($conditions !== null) {
-      //   if ($conditios == 0) {
-      //     Controller::redirect('/users/login');
-      //   } elseif($conditios == 1) {
-      //     $mysql .= $conditios;
-      //   } else {
-      //     $lastElement = end($conditios);
-      //     foreach ($conditios as $conditio) {
-      //       $mysql .= $conditio;
-      //       if (!$conditio == $lastElement) {
-      //         $mysql .= ',';
-      //       }
-      //     }
-      //   }
-      // }
+      if ($conditions !== null) {
+        if ($conditions == 0) {
+          Controller::redirect('/users/login');
+        } elseif($conditions == 1) {
+          $mysql .= $conditions;
+        } else {
+          $lastElement = end($conditions);
+          foreach ($conditions as $condition) {
+            $mysql .= $condition;
+            if (!$condition == $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+      }
+
+      if ($groups !== null) {
+        if ($groups == 0) {
+          Controller::redirect('/users/login');
+        } elseif($groups == 1) {
+          $mysql .= $groups;
+        } else {
+          $lastElement = end($groups);
+          foreach ($groups as $group) {
+            $mysql .= $group;
+            if (!$group == $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+      }
+
+      if ($orders !== null) {
+        if ($orders == 0) {
+          Controller::redirect('/users/login');
+        } elseif($orders == 1) {
+          $mysql .= $orders;
+        } else {
+          $lastElement = end($orders);
+          foreach ($orders as $order) {
+            $mysql .= $order;
+            if (!$order == $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+      }
+
+      if ($limit !== null) {
+        if ($limit == 0) {
+          Controller::redirect('/users/login');
+        } elseif($limit == 1) {
+          $mysql .= $limit;
+        } else {
+          $lastElement = end($limit);
+          foreach ($limit as $limiti) {
+            $mysql .= $limiti;
+            if (!$limiti == $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+      }
 
       self::connect();
       $query = self::$db->prepare($mysql);
