@@ -5,6 +5,12 @@
  */
 class UserController extends Controller {
 
+  public function select()
+  {
+    $data = Database::select1(['*'],['users'],null,null,null,null);
+    var_dump($data);
+  }
+
   public function login($msg = '') {
     User::isSetRemmember_me();
     //login method POST
