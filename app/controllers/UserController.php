@@ -7,6 +7,7 @@ class UserController extends Controller {
 
   public function login($msg = '') {
     User::isSetRemmember_me();
+    //login method POST
     if (isset($_POST['password'])) {
       $user = new User;
       $remmeberme = isset($_POST['remmember_me']);
@@ -18,6 +19,7 @@ class UserController extends Controller {
         'msg' => ''
       ]);
       $this->view->render();
+      //login method get
     } else {
       $this->view('user\index',[
         'page' => 'LogIn',
@@ -29,9 +31,10 @@ class UserController extends Controller {
   }
 
   public function register() {
-      if (isset($_POST['passw'])) {
+      // register method post
+      if (isset($_POST['password'])) {
         $user = new User;
-        $user->save($_POST['passw'],$_POST['conpassw'],$_POST['username'],$_POST['email']);
+        $user->save($_POST['password'],$_POST['confirmpassword'],$_POST['username'],$_POST['email']);
         $this->view('user\register',[
           'page' => 'Register',
           'error' => $user->errors,
@@ -53,63 +56,56 @@ class UserController extends Controller {
     if ($token == '' || $username == '') {
       Controller::redirect('/user/login');
     } else {
-      echo $username;
       User::confirmationToken($username,$token);
     }
   }
 
+  //reset password form to get email
   public function reset() {
+    //reset method Post
     if (isset($_POST['email'])) {
       User::reset();
       $this->view('user\reset',[
         'success' => 'Your get the info from email.'
       ]);
       $this->view->render();
+      //reset method get
     } else {
       $this->view('user\reset',[]);
       $this->view->render();
     }
   }
 
+  //reset password
   public function resetpassword($token='',$username='',$error = '') {
     $tokenExist = User::tokenExist($token);
     $userExist = User::userExist($username);
-    if(!$tokenExist[2] || !$userExist[1]) {
+    //after posting to rememmber $token and $username
+    if(!$tokenExist['reset_token'] || !$userExist['username']) {
+      //if isset $_POST
       if (isset($_POST['password'])) {
           $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
           $username = $_POST['hidden'];
           $token = $_POST['hiddenToken'];
+          //if not valid return to same link to try again
           if ($validate == '') {
             Controller::redirect('/user/resetpassword/'.$token.'/'.$username.'/error');
           }
+          $mysql = 'DELETE FROM `reset_password` WHERE `reset_token` = ?';
+          User::deleteResetPassToken($mysql,$token);
+          $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
+          User::updatePass($mysql,$validate,$username);
         } else {
           Controller::redirect('/user/login/error');
         }
     }
-
-    if (isset($_POST['password'])) {
-        $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
-        $username = $_POST['hidden'];
-        $token = $_POST['hiddenToken'];
-        if ($validate == '') {
-          Controller::redirect('/user/resetpassword/'.$token.'/'.$username);
-        }
-        $mysql = 'DELETE FROM `reset_password` WHERE `reset_token` = ?';
-        User::deleteResetPassToken($mysql,$token);
-        $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
-        User::updatePass($mysql,$validate,$username);
-    }
+    //mothod Get
     $this->view('user\resetpassword',[
       'username' => $username,
       'token' => $token,
       'error' => $error
     ]);
     $this->view->render();
-
-
-    // if ($token == '') {
-    //   Controller::redirect('/user/login/error');
-    // }
   }
 
 

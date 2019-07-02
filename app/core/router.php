@@ -14,7 +14,8 @@ class Router {
     if (file_exists(CONTROLLER. $this->controller.'.php')) {
       $this->controller = new $this->controller;
       if (empty($this->controller)) {
-        echo 123;
+        header("Location: /user/login",true,303);
+        exit;
       }
       if (method_exists($this->controller,$this->action)) {
         call_user_func_array([$this->controller,$this->action],$this->params);

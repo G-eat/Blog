@@ -15,6 +15,3 @@ spl_autoload_register( 'spl_autoload', false );
 session_start();
 
 new Router;
-
-// var_dump( $_SERVER['REQUEST_URI'] );
-// var_dump( get_include_path() );

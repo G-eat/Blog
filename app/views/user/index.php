@@ -2,9 +2,7 @@
 
   include '../app/views/include/header.php';
   include '../app/views/include/errors.php';
-  // echo session_id();
 
-  // echo session_id();
   if (!isset($_SESSION['user'])){ ?>
 
       <?php if ($this->data['msg'] == 'success'): ?>

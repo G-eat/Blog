@@ -1,9 +1,7 @@
 <?php
 
   include '../app/views/include/header.php';
-  // echo session_id();
-
-  // echo session_id();
+  
   if (!isset($_SESSION['user'])){ ?>
     <?php if (isset($this->data['success'])): ?>
       <h3 class="alert alert-success container"><?php echo $this->data['success'] ?></h3>
