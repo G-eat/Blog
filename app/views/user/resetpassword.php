@@ -3,6 +3,9 @@
   include '../app/views/include/header.php';
 
   if (!isset($_SESSION['user'])){ ?>
+    <?php if ($this->data['error'] == 'error'): ?>
+      <h5 class="alert alert-danger container">Not same password-confirm password.</h5>
+    <?php endif; ?>
 
   <div class="container mt-4">
     <h3 class="text-primary mb-3">New Password</h3>

@@ -71,11 +71,19 @@ class UserController extends Controller {
     }
   }
 
-  public function resetpassword($token='',$username='') {
+  public function resetpassword($token='',$username='',$error = '') {
     $tokenExist = User::tokenExist($token);
     if(!$tokenExist[2]) {
-      // Controller::redirect('/user/login/error');
-      echo 12356312;
+      if (isset($_POST['password'])) {
+          $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
+          $username = $_POST['hidden'];
+          $token = $_POST['hiddenToken'];
+          if ($validate == '') {
+            Controller::redirect('/user/resetpassword/'.$token.'/'.$username.'/error');
+          }
+        } else {
+          Controller::redirect('/user/login/error');
+        }
     }
 
     if (isset($_POST['password'])) {
@@ -91,7 +99,8 @@ class UserController extends Controller {
     }
     $this->view('user\resetpassword',[
       'username' => $username,
-      'token' => $token
+      'token' => $token,
+      'error' => $error
     ]);
     $this->view->render();
 
