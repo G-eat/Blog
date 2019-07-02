@@ -331,15 +331,16 @@ class User extends Database {
 
   public function updatePass($mysql,$validate,$username) {
     self::connect();
-    echo $validate.'<br>';
-    echo $username;
     $query = self::$db->prepare($mysql);
     $query->execute([$validate,$username]);
-    var_dump($validate);
-    var_dump($username);
-
 
     Controller::redirect('/user/login/ok');
+  }
+
+  public function deleteResetPassToken($mysql,$token) {
+    self::connect();
+    $query = self::$db->prepare($mysql);
+    $query->execute([$token]);
   }
 
   // random text

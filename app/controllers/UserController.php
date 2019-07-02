@@ -93,9 +93,10 @@ class UserController extends Controller {
         if ($validate == '') {
           Controller::redirect('/user/resetpassword/'.$token.'/'.$username);
         }
+        $mysql = 'DELETE FROM `reset_password` WHERE `reset_token` = ?';
+        User::deleteResetPassToken($mysql,$token);
         $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
         User::updatePass($mysql,$validate,$username);
-        // Controller::redirect('/user/login/4');
     }
     $this->view('user\resetpassword',[
       'username' => $username,
