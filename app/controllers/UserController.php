@@ -73,7 +73,8 @@ class UserController extends Controller {
 
   public function resetpassword($token='',$username='',$error = '') {
     $tokenExist = User::tokenExist($token);
-    if(!$tokenExist[2]) {
+    $userExist = User::userExist($username);
+    if(!$tokenExist[2] || !$userExist[1]) {
       if (isset($_POST['password'])) {
           $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
           $username = $_POST['hidden'];

@@ -265,6 +265,12 @@ class User extends Database {
     return $data;
   }
 
+  public function userExist($username) {
+    $mysql = 'SELECT * FROM `users` WHERE `username` LIKE ?';
+    $data = User::exist($mysql,$username);
+    return $data;
+  }
+
   public function exist($mysql,$token)
   {
     self::connect();
