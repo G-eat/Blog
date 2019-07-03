@@ -38,7 +38,7 @@ interface DBInterface
     //  * @return integer Affected records.
     //  * @throws Exception
     //  */
-    // public function update(array $tables, array $values, array $conditions = null);
+    public function update(array $tables, array $values, array $conditions = null);
     //
     // /**
     //  * Delete.

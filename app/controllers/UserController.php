@@ -12,6 +12,13 @@ class UserController extends Controller {
   //   var_dump($data);
   // }
 
+  // public function update()
+  // {
+  //   $username = "andi";
+  //   $data = Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
+  //   var_dump($data);
+  // }
+
 
   public function login($msg = '') {
     User::isSetRemmember_me();
@@ -101,8 +108,10 @@ class UserController extends Controller {
           }
           $mysql = 'DELETE FROM `reset_password` WHERE `reset_token` = ?';
           User::deleteResetPassToken($mysql,$token);
-          $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
-          User::updatePass($mysql,$validate,$username);
+          // $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
+          // User::updatePass($mysql,$validate,$username);
+          Database::update(['users'],[['password','=',"'".$validate."'"]],[['username','=',"'".$username."'"]]);
+          Controller::redirect('/user/login/ok');
         } else {
           Controller::redirect('/user/login/error');
         }

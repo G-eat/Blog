@@ -196,4 +196,75 @@ class Database implements DBInterface {
       }
     }
 
+    public function update($tables, $values, $conditions = null){
+      try {
+        $mysql = 'UPDATE ';
+        if ($tables == null || $tables == [''] || $tables == '') {
+          throw new Exception('Table is null.');
+        } elseif($tables == 1) {
+          $mysql .= $tables;
+        } else {
+          $lastElement = end($tables);
+          foreach ($tables as $table) {
+            $mysql .= $table;
+            if ($table !== $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+
+        $mysql .= ' SET ';
+        if ($values !== null) {
+          if($conditions == 1) {
+            foreach ($values as $value) {
+              $mysql .= $value;
+              $mysql .= ' ';
+            }
+          } else {
+            $nrIValues = count($values);
+            $nr = 0;
+            foreach ($values as $value) {
+              $nr ++;
+              foreach ($value as $value1) {
+                $mysql .= $value1;
+                $mysql .= ' ';
+            }
+            // $mysql .= '';
+            if ($nr !== $nrIValues) {
+              $mysql .= ',';
+            } else {
+              $mysql .= ' ';
+            }
+          }
+          echo $nr . $nrIValues;
+        }
+      }
+
+        if ($conditions !== null) {
+          $mysql .= ' WHERE ';
+          if($conditions == 1) {
+            foreach ($conditions as $condition) {
+              $mysql .= $condition;
+              $mysql .= ' ';
+            }
+          } else {
+            foreach ($conditions as $condition) {
+              foreach ($condition as $condition1) {
+                $mysql .= $condition1;
+                $mysql .= ' ';
+            }
+          }
+        }
+      }
+
+
+        self::connect();
+        $query = self::$db->prepare($mysql);
+        $data = $query->execute();
+        return $data;
+      } catch (\Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+      }
+    }
+
 }

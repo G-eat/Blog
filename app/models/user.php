@@ -155,8 +155,11 @@ class User extends Database {
     $data = USER::confirmToken($mysql,$token,$username);
 
     if ($data[0] == 1) {
-      $mysql = 'UPDATE `users` SET `token`= 1 WHERE `username` = ?';
-      User::updatetokentrue($mysql,$username);
+      Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
+      session_regenerate_id(true);
+
+      $_SESSION['user'] = $username;
+      Controller::redirect('/user/login/success');
     } else {
       Controller::redirect('/user/login/error');
     }
@@ -168,17 +171,6 @@ class User extends Database {
     $query->execute([$token,$username]);
     return  $query->fetch();
   }
-
-  public function updatetokentrue($mysql,$username) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      $query->execute([$username]);
-
-      session_regenerate_id(true);
-
-      $_SESSION['user'] = $username;
-      Controller::redirect('/user/login/success');
-    }
 
     //reset password form to get email
     public function reset() {
