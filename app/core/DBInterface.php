@@ -16,7 +16,7 @@ interface DBInterface
      * @return array
      * @throws Exception
      */
-    public function select1(array $fields, array $tables, array $conditions = null, array $groups = null, array $orders = null, array $limit = null);
+    public function select(array $fields, array $tables, array $conditions = null, array $groups = null, array $orders = null, array $limit = null);
 
     // /**
     //  * Insert.
@@ -27,7 +27,7 @@ interface DBInterface
     //  * @return integer|boolean Inserted record Id.
     //  * @throws Exception
     //  */
-    // public function insert(array $tables, array $values, $sequenceName=null);
+    public function insert(array $tables, array $values, $sequenceName=null);
     //
     // /**
     //  * Update.

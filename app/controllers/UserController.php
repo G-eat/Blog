@@ -5,12 +5,13 @@
  */
 class UserController extends Controller {
 
-  public function select($order = '')
-  {
-    // $username = "'andi'";
-    $data = Database::select1(['username','id'],['users'],[['id','LIKE','117'],['AND'],["username","LIKE","'andi'"]],['username'],['username','DESC'],[2]);
-    var_dump($data);
-  }
+  // public function select($order = '')
+  // {
+  //   // $username = "'andi'";
+  //   $data = Database::select(['*'],['users'],null,null,null,[2]);
+  //   var_dump($data);
+  // }
+
 
   public function login($msg = '') {
     User::isSetRemmember_me();

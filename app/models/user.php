@@ -11,30 +11,16 @@ class User extends Database {
     $cookie = $_COOKIE['remmember_me'] ?? false;
 
     if ($cookie) {
-      $mysql = 'SELECT * FROM `remmember_me` WHERE `token_hash` LIKE ?';
-      $data = User::select($mysql,$cookie);
-      $isExpireToken = User::isExpireToken($data['expire_at']);
-      if ( $data['user_name'] !== ''  && !$isExpireToken) {
-        $_SESSION['user'] = $data['user_name'];
+      $data = Database::select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+      $isExpireToken = User::isExpireToken($data[0]['expire_at']);
+      if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
+        $_SESSION['user'] = $data[0]['user_name'];
       }
     }
   }
 
   public function isExpireToken($expire_at) {
     return strtotime($expire_at) < time();
-  }
-
-  // queries in database user
-  public function select($mysql , $data = array()) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    if (!empty($data)) {
-      $query->execute([$data]);
-    } else {
-      $query->execute();
-    }
-    $data = $query->fetch();
-    return $data;
   }
 
   // login post
@@ -81,14 +67,7 @@ class User extends Database {
     $expiry_token = time() + 60 * 60 * 24 * 7;
 
     setcookie('remmember_me' , $hash_token , $expiry_token , '/');
-    $mysql = 'INSERT INTO `remmember_me`(`token_hash`,`user_name`,`expire_at`) VALUES(?,?,?)';
-    USER::remmember_me($mysql,$hash_token,$username,$expiry_token);
-  }
-
-  public function remmember_me($mysql,$hash_token,$username,$expiry_token) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    $query->execute([$hash_token,$username,date('Y-m-d H:i:s' , $expiry_token)]);
+    Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expiry_token."'"]);
     $_SESSION['user'] = $username;
     Controller::redirect('/user/login');
   }
@@ -97,12 +76,11 @@ class User extends Database {
   public function save($password,$confirmpassword,$username,$email){
     User::validateRegister($password,$confirmpassword,$username,$email);
     if ($this->errors == null) {
-      $mysql = 'INSERT INTO `users`(`username`,`email`,`password`,`token`) VALUES (?,?,?,?)';
       $md5password = md5($password);
 
       $token = User::generateRandomString();
 
-      User::insert($mysql,$username,$email,$md5password,$token);
+      $data = Database::insert(['users'],['username','email','password','token'],["'".$username."'","'".$email."'","'".$md5password."'","'".$token."'"]);
 
       User::sendMail($username,$email,$token);
 
@@ -137,14 +115,6 @@ class User extends Database {
     $data = $query->fetch();
     return $data;
   }
-
-  public function insert($mysql , $username,$email,$password,$token) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    $query->execute([$username,$email,$password,$token]);
-    // Controller::redirect('/user/login');
-  }
-
 
   // sendMail
   public function sendMail($username,$email,$token) {
@@ -213,12 +183,10 @@ class User extends Database {
     //reset password form to get email
     public function reset() {
       $token = User::generateRandomString();
-      $mysql = 'SELECT * FROM `users` WHERE `email` LIKE ?';
-      $data = User::select($mysql,$_POST['email']);
-      if ($data['username']) {
-        User::sendResetMail($data['username'],$data['email'],$token);
-        $mysql = 'INSERT INTO `reset_password`(`user_name`,`reset_token`) VALUES(?,?)';
-        User::insertReset($mysql,$data['username'],$token);
+      $data = Database::select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
+      if ($data[0]['username']) {
+        User::sendResetMail($data[0]['username'],$data[0]['email'],$token);
+        Database::insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
       }
     }
 
@@ -255,25 +223,16 @@ class User extends Database {
       mail($to, $subject, $message, implode("\r\n", $headers));
     }
 
-
-    public function insertReset($mysql,$username,$token) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      $query->execute([$username,$token]);
-    }
-
     //reset password see if token exists
     public function tokenExist($token) {
-      $mysql = 'SELECT * FROM `reset_password` WHERE `reset_token` LIKE ?';
-      $data = User::exist($mysql,$token);
-      return $data;
+      $data = Database::select(['*'],['reset_password'],[['reset_token','LIKE',"'".$token."'"]]);
+      return $data[0];
     }
 
     //reset password see if user exists
     public function userExist($username) {
-      $mysql = 'SELECT * FROM `users` WHERE `username` LIKE ?';
-      $data = User::exist($mysql,$username);
-      return $data;
+      $data = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
+      return $data[0];
     }
 
     public function exist($mysql,$token) {

@@ -26,14 +26,11 @@ class Database implements DBInterface {
         return self::$db;
     }
 
-    public function select1($fields,$tables,$conditions=null,$groups=null,$orders=null,$limit=null)
+    public function select($fields,$tables,$conditions=null,$groups=null,$orders=null,$limit=null)
     {
       try {
-        if (!isset($fields)) {
-          throw new Exception('Field is not set.');
-        }
         $mysql = 'SELECT ';
-        if ($fields == ['']) {
+        if ($fields == [''] || $fields == '' || $fields == null) {
           throw new Exception('Field is null.');
         } elseif($fields == 1) {
             $mysql .= $fields;
@@ -48,7 +45,7 @@ class Database implements DBInterface {
         }
 
         $mysql .= ' FROM ';
-        if ($tables == null) {
+        if ($tables == null || $tables == [''] || $tables == '') {
           throw new Exception('Table is null.');
         } elseif($tables == 1) {
           $mysql .= $tables;
@@ -90,7 +87,7 @@ class Database implements DBInterface {
             foreach ($groups as $group) {
               $mysql .= $group;
               if ($group !== $lastElement) {
-                $mysql .= ',';
+                $mysql .= ' ';
               }
             }
           }
@@ -130,7 +127,69 @@ class Database implements DBInterface {
         $query = self::$db->prepare($mysql);
         $query->execute();
         $data = $query->fetchAll();
-        var_dump($query);
+        // var_dump($query);
+        return $data;
+      } catch (\Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+      }
+    }
+
+    public function insert($tables,$values, $sequenceName=null){
+      try {
+        $mysql = 'INSERT INTO ';
+        if ($tables == null || $tables == [''] || $tables == '') {
+          throw new Exception('Table is null.');
+        } elseif($tables == 1) {
+          $mysql .= $tables;
+        } else {
+          $lastElement = end($tables);
+          foreach ($tables as $table) {
+            $mysql .= $table;
+            if ($table !== $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+
+        $mysql .= '(';
+        if ($values == null || $values == [''] || $values == '') {
+          throw new Exception('Table is null.');
+        } elseif($values == 1) {
+          $mysql .= $values;
+        } else {
+          $lastElement = end($values);
+          foreach ($values as $value) {
+            $mysql .= $value;
+            $mysql .= ' ';
+            if ($value !== $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+        $mysql .= ')';
+
+        $mysql .= ' VALUES (';
+        if ($sequenceName == null || $sequenceName == [''] || $sequenceName == '') {
+          throw new Exception('Sequence is null.');
+        } else {
+          if($sequenceName == 1) {
+            $mysql .= $sequenceName;
+          } else {
+            $lastElement = end($sequenceName);
+            foreach ($sequenceName as $sequence) {
+              $mysql .= $sequence;
+              if ($sequence !== $lastElement) {
+                $mysql .= ',';
+              }
+            }
+          }
+        }
+        $mysql .= ')';
+
+
+        self::connect();
+        $query = self::$db->prepare($mysql);
+        $data = $query->execute();
         return $data;
       } catch (\Exception $e) {
         echo 'Caught exception: ',  $e->getMessage(), "\n";
