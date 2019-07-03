@@ -19,11 +19,11 @@
         </div>
         <div class="form-group">
           <label class="text-info" for="exampleInputPassword1">Password :</label>
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name='passw' required minlength=8 maxlength=20>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name='password' required minlength=8 maxlength=20>
           <small id="passwordHelp" class="form-text text-muted">8-20 Characters long.</small>
         </div>
         <input type="hidden" name="token" value="<?php echo $this->data['token'] ?>">
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" name="submit" class="btn btn-primary">Register</button>
       </form>
     </div>
 

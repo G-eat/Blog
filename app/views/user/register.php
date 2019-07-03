@@ -28,7 +28,7 @@
        <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Confirm password" name='confirmpassword' required minlength=8 maxlength=20>
        <small id="confirmpassHelp" class="form-text text-muted">8-20 Characters long.</small>
      </div>
-     <button type="submit" class="btn btn-primary">Register</button>
+     <button type="submit" name="submit" class="btn btn-primary">Register</button>
    </form>
  </div>
 

@@ -33,7 +33,7 @@
       <div>
         <a href='/user/reset'>Reset Password.</a>
       </div>
-      <button type="submit" class="btn btn-primary mt-3">LogIn</button>
+      <button type="submit" name="submit" class="btn btn-primary mt-3">LogIn</button>
     </form>
   </div>
 

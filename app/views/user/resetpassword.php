@@ -22,7 +22,7 @@
       </div>
       <input type="hidden" name="hidden" value="<?php echo isset($this->data['username']) ? $this->data['username']:'' ?>">
       <input type="hidden" name="hiddenToken" value="<?php echo isset($this->data['token']) ? $this->data['token']:'' ?>">
-      <button type="submit" class="btn btn-primary">New Password</button>
+      <button type="submit" name="submit" class="btn btn-primary">New Password</button>
     </form>
   </div>
 

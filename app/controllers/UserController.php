@@ -5,17 +5,17 @@
  */
 class UserController extends Controller {
 
-  public function select($order)
+  public function select($order = '')
   {
     // $username = "'andi'";
-    $data = Database::select1(['*'],['users'],null,null,[' ORDER BY '.$order.' ASC'],[' LIMIT 1']);
+    $data = Database::select1(['username','id'],['users'],[['id','LIKE','117'],['AND'],["username","LIKE","'andi'"]],['username'],['username','DESC'],[2]);
     var_dump($data);
   }
 
   public function login($msg = '') {
     User::isSetRemmember_me();
     //login method POST
-    if (isset($_POST['password'])) {
+    if (isset($_POST['submit'])) {
       $user = new User;
       $remmeberme = isset($_POST['remmember_me']);
       $user->logIn($_POST['password'],$_POST['username'],$remmeberme);
@@ -39,7 +39,7 @@ class UserController extends Controller {
 
   public function register() {
       // register method post
-      if (isset($_POST['password'])) {
+      if (isset($_POST['submit'])) {
         $user = new User;
         $user->save($_POST['password'],$_POST['confirmpassword'],$_POST['username'],$_POST['email']);
         $this->view('user\register',[
@@ -90,7 +90,7 @@ class UserController extends Controller {
     //after posting to rememmber $token and $username
     if(!$tokenExist['reset_token'] || !$userExist['username']) {
       //if isset $_POST
-      if (isset($_POST['password'])) {
+      if (isset($_POST['submit'])) {
           $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
           $username = $_POST['hidden'];
           $token = $_POST['hiddenToken'];
@@ -119,7 +119,7 @@ class UserController extends Controller {
   //confirm email with form
   // public function confirmationemail() {
   //   $username = $_POST['username'];
-  //   $password = md5($_POST['passw']);
+  //   $password = md5($_POST['password']);
   //   $token = $_POST['token'];
   //
   //   $isCoonfirmation = User::confirmationemail($username,$password,$token);
