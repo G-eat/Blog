@@ -19,6 +19,12 @@ class UserController extends Controller {
   //   var_dump($data);
   // }
 
+  // public function delete()
+  // {
+  //   $data = Database::delete1(['users'],[['token','=','1'],['OR'],['dsa','=','a']]);
+  //   var_dump($data);
+  // }
+
 
   public function login($msg = '') {
     User::isSetRemmember_me();
@@ -106,10 +112,7 @@ class UserController extends Controller {
           if ($validate == '') {
             Controller::redirect('/user/resetpassword/'.$token.'/'.$username.'/error');
           }
-          $mysql = 'DELETE FROM `reset_password` WHERE `reset_token` = ?';
-          User::deleteResetPassToken($mysql,$token);
-          // $mysql = 'UPDATE `users` SET `password` =? WHERE `username` = ?';
-          // User::updatePass($mysql,$validate,$username);
+          Database::delete1(['reset_password'],[['reset_token','=',"'".$token."'"]]);
           Database::update(['users'],[['password','=',"'".$validate."'"]],[['username','=',"'".$username."'"]]);
           Controller::redirect('/user/login/ok');
         } else {
@@ -156,11 +159,10 @@ class UserController extends Controller {
 
     // delete cookies
     if (isset($_COOKIE['remmember_me'])) {
-      $mysql = 'DELETE FROM `remmember_me` WHERE `token_hash` LIKE ?';
-      $cookie = $_COOKIE['remmember_me'];
       // delete  cookie
+      $cookie = $_COOKIE['remmember_me'];
       setcookie('remmember_me','',time() - 3600,'/');
-      User::delete($mysql,$cookie);
+      Database::delete(['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
       }
 
     // Finally, destroy the session.

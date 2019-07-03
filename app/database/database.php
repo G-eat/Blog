@@ -267,4 +267,48 @@ class Database implements DBInterface {
       }
     }
 
+    public function delete($tables, $conditions = null){
+      try {
+        $mysql = 'DELETE FROM ';
+        if ($tables == null || $tables == [''] || $tables == '') {
+          throw new Exception('Table is null.');
+        } elseif($tables == 1) {
+          $mysql .= $tables;
+        } else {
+          $lastElement = end($tables);
+          foreach ($tables as $table) {
+            $mysql .= $table;
+            if ($table !== $lastElement) {
+              $mysql .= ',';
+            }
+          }
+        }
+
+        if ($conditions !== null) {
+          $mysql .= ' WHERE ';
+          if($conditions == 1) {
+            foreach ($conditions as $condition) {
+              $mysql .= $condition;
+              $mysql .= ' ';
+            }
+          } else {
+            foreach ($conditions as $condition) {
+              foreach ($condition as $condition1) {
+                $mysql .= $condition1;
+                $mysql .= ' ';
+            }
+          }
+        }
+      }
+
+
+        self::connect();
+        $query = self::$db->prepare($mysql);
+        $data = $query->execute();
+        return $data;
+      } catch (\Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+      }
+    }
+
 }

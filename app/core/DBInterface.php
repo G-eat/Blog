@@ -48,7 +48,7 @@ interface DBInterface
     //  * @return integer Affected records.
     //  * @throws Exception
     //  */
-    // public function delete(array $tables, array $conditions = null);
+    public function delete(array $tables, array $conditions = null);
     //
     // /**
     //  * Raw Query

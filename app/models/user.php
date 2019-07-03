@@ -245,20 +245,6 @@ class User extends Database {
         }
       }
     }
-    // deleteResetPassToken
-    public function deleteResetPassToken($mysql,$token) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      $query->execute([$token]);
-    }
-    // updatePass
-    public function updatePass($mysql,$validate,$username) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      $query->execute([$validate,$username]);
-
-      Controller::redirect('/user/login/ok');
-    }
 
     // random text
     public function generateRandomString($length = 10) {
@@ -269,19 +255,6 @@ class User extends Database {
           $randomString .= $characters[rand(0, $charactersLength - 1)];
       }
       return $randomString;
-    }
-
-    public function delete($mysql , $data = array()) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      if (!empty($data)) {
-        $query->execute([$data]);
-      } else {
-        $query->execute();
-      }
-      $data = $query->fetchAll();
-      Controller::redirect('/user/login');
-      return $data;
     }
 
 
