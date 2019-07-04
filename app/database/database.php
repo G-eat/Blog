@@ -311,4 +311,13 @@ class Database implements DBInterface {
       }
     }
 
+    public function raw($mysql){
+      // var_dump($mysql);
+      self::connect();
+      $query = self::$db->prepare($mysql);
+      $query->execute();
+      $data = $query->fetch();
+      return $data;
+    }
+
 }

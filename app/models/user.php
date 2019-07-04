@@ -15,6 +15,8 @@ class User extends Database {
       $isExpireToken = User::isExpireToken($data[0]['expire_at']);
       if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
         $_SESSION['user'] = $data[0]['user_name'];
+      } else {
+        UserController::logout();
       }
     }
   }
@@ -43,20 +45,12 @@ class User extends Database {
   // validate login
   public function validateLogin($password,$username) {
     $password1 = md5($password);
-    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? AND `password` = ? AND `token` =1';
-    $data = USER::isRegister($mysql,$username,$password1);
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = "'.$username.'" AND `password` ="'. $password1.'" AND `token` =1';
+    $data = Database::raw($mysql);
 
     if ($data[0] !== '1' ) {
       $this->errors[] ='Incorrect Password or you not verify your email.';
     }
-  }
-
-  public function isRegister($mysql,$username,$password) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    $query->execute([$username,$password]);
-    $data = $query->fetch();
-    return $data;
   }
 
   // remmember me
@@ -65,9 +59,10 @@ class User extends Database {
     $hash_token = $token->getHash();
 
     $expiry_token = time() + 60 * 60 * 24 * 7;
+    $expire_at = date('Y-m-d H:i:s',$expiry_token);
 
     setcookie('remmember_me' , $hash_token , $expiry_token , '/');
-    Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expiry_token."'"]);
+    Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expire_at."'"]);
     $_SESSION['user'] = $username;
     Controller::redirect('/user/login');
   }
@@ -92,11 +87,18 @@ class User extends Database {
 
   // validate register
   public function validateRegister($password,$confirmpassword,$username,$email) {
-    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? OR `email` = ?';
-    $data = USER::selectvalidate($mysql,$username,$email);
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = '."'".$username."'";
+    $mysql2 = 'SELECT COUNT(*) FROM `users` WHERE `email` = '."'".$email."'";
+
+    $data = Database::raw($mysql);
+    $data2 = Database::raw($mysql2);
 
     if ($data[0] == 1) {
-      $this->errors[] ='This username and email is used.';
+      $this->errors[] ='This username is used.';
+    }
+
+    if ($data2[0] == 1) {
+      $this->errors[] ='This email is used.';
     }
 
     if ($confirmpassword === $password) {
@@ -108,13 +110,6 @@ class User extends Database {
     }
   }
 
-  public function selectvalidate($mysql,$username,$email) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    $query->execute([$username,$email]);
-    $data = $query->fetch();
-    return $data;
-  }
 
   // sendMail
   public function sendMail($username,$email,$token) {
@@ -151,8 +146,9 @@ class User extends Database {
 
   //confirm email with link
   public function confirmationToken($username,$token) {
-    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `token` = ? AND `username` = ?';
-    $data = USER::confirmToken($mysql,$token,$username);
+    $mysql = 'SELECT COUNT(*) FROM `users` WHERE `token` ='."'".$token."'".' AND `username` = '."'".$username."'";
+    // $data = USER::confirmToken($mysql,$token,$username);
+    $data = Database::raw($mysql);
 
     if ($data[0] == 1) {
       Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);

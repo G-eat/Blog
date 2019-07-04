@@ -56,5 +56,5 @@ interface DBInterface
     //  * @param $query
     //  * @return bool|mysqli_result
     //  */
-    // public function raw($query);
+    public function raw($mysql);
 }

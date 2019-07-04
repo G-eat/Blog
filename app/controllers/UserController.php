@@ -5,27 +5,6 @@
  */
 class UserController extends Controller {
 
-  // public function select($order = '')
-  // {
-  //   // $username = "'andi'";
-  //   $data = Database::select(['*'],['users'],null,null,null,[2]);
-  //   var_dump($data);
-  // }
-
-  // public function update()
-  // {
-  //   $username = "andi";
-  //   $data = Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
-  //   var_dump($data);
-  // }
-
-  // public function delete()
-  // {
-  //   $data = Database::delete1(['users'],[['token','=','1'],['OR'],['dsa','=','a']]);
-  //   var_dump($data);
-  // }
-
-
   public function login($msg = '') {
     User::isSetRemmember_me();
     //login method POST
@@ -112,7 +91,7 @@ class UserController extends Controller {
           if ($validate == '') {
             Controller::redirect('/user/resetpassword/'.$token.'/'.$username.'/error');
           }
-          Database::delete1(['reset_password'],[['reset_token','=',"'".$token."'"]]);
+          Database::delete(['reset_password'],[['reset_token','=',"'".$token."'"]]);
           Database::update(['users'],[['password','=',"'".$validate."'"]],[['username','=',"'".$username."'"]]);
           Controller::redirect('/user/login/ok');
         } else {
