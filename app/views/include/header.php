@@ -25,6 +25,10 @@
       </h5>
       <nav class="my-2 my-md-0 mr-md-3">
         <?php if (isset($_SESSION['user'])){ ?>
+          <?php if (isset($_SESSION['admin'])) { ?>
+            <a  href="/admin/index" class="p-2 text-dark">Admin</a>
+          <?php } ?>
+          <a  href="/post/index" class="p-2 text-dark">Home</a>
           <a  href="/user/logout" class="p-2 text-dark">Logout</a>
          <?php } else { ?>
            <a class="p-2 text-dark <?php echo ($this->data['page'] == 'LogIn') ? 'active':'' ?>" href="/user/login">Login</a>

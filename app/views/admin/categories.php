@@ -1,39 +1,35 @@
 <?php
 
   include '../app/views/include/header.php';
+  if (!isset($_SESSION['admin'])) {
+    Controller::redirect('post/index');
+  }
 ?>
 
   <div class="container mt-4">
     <div class="row">
-      <div class="col-9 border-right">
-        <h3 class="text-center">Articles</h3>
-      </div>
-      <div class="col-3 border-left">
+      <div class="col-12">
         <h3 class="text-center">Categories</h3>
         <div class="list-group">
           <?php foreach ($this->data['categories'] as $category) { ?>
-            <!-- < if (isset($_SESSION['admin'])){ ?> -->
-              <!-- <form action="/category/delete" method="post">
-                <input type="hidden" name="category_id" value="< echo $category['id'] ?>">
-                <a href="/category/show/< echo $category['name'] ?>" class="list-group-item list-group-item-action">< echo $category['name'] ?><span style="float:right"><button type="submit" class="btn btn-outline-danger btn-sm">X</button></span></a>
-              </form> -->
-              <!--  } else { ?> -->
-                <a href="/category/show/<?php echo $category['name'] ?>" class="list-group-item list-group-item-action"><?php echo $category['name'] ?></a>
-              <!--  } ?> -->
+              <form action="/category/delete" method="post">
+                <input type="hidden" name="category_id" value="<?php echo $category['id'] ?>">
+                <a href="/category/update/<?php echo $category['id'] ?>" class="list-group-item list-group-item-action"><?php echo $category['name'] ?><span style="float:right"><button type="submit" class="btn btn-outline-danger btn-sm">X</button></span></a>
+              </form>
             <?php } ?>
         </div>
-        <!-- < if(isset($_SESSION['admin'])) {?> -->
+        <?php if(isset($_SESSION['admin'])) {?>
           <!-- Button trigger modal -->
-          <!-- <button type="button" class="btn btn-primary btn-block mt-3" data-toggle="modal" data-target="#exampleModal">
+          <button type="button" class="btn btn-primary btn-block mt-3" data-toggle="modal" data-target="#exampleModal">
             ADD Category
-          </button> -->
-        <!-- < } ?> -->
+          </button>
+        <?php } ?>
       </div>
     </div>
   </div>
 
   <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -54,7 +50,7 @@
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
  <?php
     include '../app/views/include/footer.php';
