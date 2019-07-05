@@ -42,6 +42,7 @@ class UserController extends Controller {
           'email' => $_POST['email']
         ]);
         $this->view->render();
+        //register get method
       } else {
         $this->view('user\register',[
           'page' => 'Register',

@@ -12,11 +12,15 @@ class User extends Database {
 
     if ($cookie) {
       $data = Database::select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+      $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
       $isExpireToken = User::isExpireToken($data[0]['expire_at']);
+      if ($data_admin[0]['username'] !== ''  && !$isExpireToken) {
+        $_SESSION['admin'] = $data_admin[0]['username'];
+      }
       if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
-        $_SESSION['user'] = $data[0]['user_name'];
+         $_SESSION['user'] = $data[0]['user_name'];
       } else {
-        UserController::logout();
+         UserController::logout();
       }
     }
   }
@@ -28,11 +32,16 @@ class User extends Database {
   // login post
   public function logIn($password,$username,$remmeberme) {
     User::validatelogin($password,$username);
+    $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
     if ($this->errors == null) {
 
       session_regenerate_id(true);
 
       $_SESSION['user'] = $username;
+      //if is admin set session admin to his name
+      if ($data_admin[0]['username'] !== '') {
+        $_SESSION['admin'] = $data_admin[0]['username'];
+      }
       if ($remmeberme == 1) {
         USER::remmmemberLogin($_POST['username']);
       }
@@ -63,6 +72,11 @@ class User extends Database {
 
     setcookie('remmember_me' , $hash_token , $expiry_token , '/');
     Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expire_at."'"]);
+    $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+    //if is admin set session admin to his name
+    if ($data_admin[0]['username'] !== '') {
+      $_SESSION['admin'] = $data_admin[0]['username'];
+    }
     $_SESSION['user'] = $username;
     Controller::redirect('/user/login');
   }
@@ -153,19 +167,16 @@ class User extends Database {
     if ($data[0] == 1) {
       Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
       session_regenerate_id(true);
-
+      $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+      //if is admin set session admin to his name
+      if ($data_admin[0]['username'] !== '') {
+        $_SESSION['admin'] = $data_admin[0]['username'];
+      }
       $_SESSION['user'] = $username;
       Controller::redirect('/user/login/success');
     } else {
       Controller::redirect('/user/login/error');
     }
-  }
-
-  public function confirmToken($mysql,$token,$username) {
-    self::connect();
-    $query = self::$db->prepare($mysql);
-    $query->execute([$token,$username]);
-    return  $query->fetch();
   }
 
     //reset password form to get email
@@ -221,14 +232,6 @@ class User extends Database {
     public function userExist($username) {
       $data = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
       return $data[0];
-    }
-
-    public function exist($mysql,$token) {
-      self::connect();
-      $query = self::$db->prepare($mysql);
-      $query->execute([$token]);
-      $data = $query->fetch();
-      return $data;
     }
 
     // validate reset password passwords
