@@ -45,7 +45,7 @@ class User extends Database {
       if ($remmeberme == 1) {
         USER::remmmemberLogin($_POST['username']);
       }
-      Controller::redirect('/user/login/success');
+      Controller::redirect('/post/index/success');
     } else {
       return $this->errors;
     }
@@ -78,7 +78,7 @@ class User extends Database {
       $_SESSION['admin'] = $data_admin[0]['username'];
     }
     $_SESSION['user'] = $username;
-    Controller::redirect('/user/login');
+    Controller::redirect('/post/index');
   }
 
   // register post
@@ -173,9 +173,9 @@ class User extends Database {
         $_SESSION['admin'] = $data_admin[0]['username'];
       }
       $_SESSION['user'] = $username;
-      Controller::redirect('/user/login/success');
+      Controller::redirect('/post/index/success');
     } else {
-      Controller::redirect('/user/login/error');
+      Controller::redirect('/post/index/error');
     }
   }
 

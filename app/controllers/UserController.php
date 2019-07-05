@@ -55,7 +55,7 @@ class UserController extends Controller {
   //confirm email with link
   public function confirmation($username = '',$token='') {
     if ($token == '' || $username == '') {
-      Controller::redirect('/user/login');
+      Controller::redirect('/post/index');
     } else {
       User::confirmationToken($username,$token);
     }
@@ -148,7 +148,7 @@ class UserController extends Controller {
     // Finally, destroy the session.
     session_destroy();
 
-    Controller::redirect('/user/login');
+    Controller::redirect('/post/index');
   }
 
 }
