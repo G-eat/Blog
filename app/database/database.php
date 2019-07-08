@@ -186,7 +186,7 @@ class Database implements DBInterface {
         }
         $mysql .= ')';
 
-
+        // var_dump($mysql);
         self::connect();
         $query = self::$db->prepare($mysql);
         $data = $query->execute();

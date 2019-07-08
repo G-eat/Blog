@@ -21,5 +21,9 @@
           txt.keyup(func).blur(func);
         });
     </script>
+    <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'body-editor1' );
+    </script>
   </body>
 </html>

@@ -29,6 +29,7 @@
             <a  href="/admin/index" class="p-2 text-dark">Admin</a>
           <?php } ?>
           <a  href="/post/index" class="p-2 text-dark">Home</a>
+          <a  href="/post/createpost" class="p-2 text-dark">Create Post</a>
           <a  href="/user/logout" class="p-2 text-dark">Logout</a>
          <?php } else { ?>
            <a class="p-2 text-dark <?php echo ($this->data['page'] == 'LogIn') ? 'active':'' ?>" href="/user/login">Login</a>

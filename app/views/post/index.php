@@ -1,5 +1,4 @@
 <?php
-
   include '../app/views/include/header.php';
 ?>
 
@@ -7,8 +6,21 @@
     <div class="row">
       <div class="col-9 border-right">
         <h3 class="text-center">Articles</h3>
+        <?php foreach ($this->data['articles'] as $article) { ?>
+          <div class="card mb-3">
+            <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title"><?php echo $article['title'] ?></h5>
+              <p class="card-text"><?php echo substr($article['body'], 0, 300); ?>...</p>
+              <div class="row">
+                <p class="card-text col-8"><small class="text-muted">Created at : <?php echo $article['created_at'] ?></small></p>
+                <a href="/post/individual/<?php echo $article['slug'] ?>" class="btn btn-primary col-4">Read More</a>
+              </div>
+            </div>
+          </div>
+        <?php } ?>
       </div>
-      <div class="col-3 border-left">
+      <div class="col-3 border-left" style="position:fixed;right:30px">
         <h3 class="text-center">Categories</h3>
         <div class="list-group">
           <?php foreach ($this->data['categories'] as $category) { ?>
