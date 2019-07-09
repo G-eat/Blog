@@ -8,13 +8,13 @@
         <h3 class="text-center">Articles</h3>
         <?php foreach ($this->data['articles'] as $article) { ?>
           <div class="card mb-3">
-            <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" alt="Card image cap">
+            <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" style="width:70%;height:50%;margin:auto" alt="Card image cap">
             <div class="card-body">
               <h5 class="card-title"><?php echo $article['title'] ?></h5>
               <p class="card-text"><?php echo substr($article['body'], 0, 300); ?>...</p>
               <div class="row">
                 <p class="card-text col-8"><small class="text-muted">Created at : <?php echo $article['created_at'] ?></small></p>
-                <a href="/post/individual/<?php echo $article['slug'] ?>" class="btn btn-primary col-4">Read More</a>
+                <a href="/post/individual/<?php echo $article['slug'] ?>" class="btn btn-primary col-4" target="_blank">Read More</a>
               </div>
             </div>
           </div>
@@ -30,7 +30,7 @@
                 <a href="/category/show/< echo $category['name'] ?>" class="list-group-item list-group-item-action">< echo $category['name'] ?><span style="float:right"><button type="submit" class="btn btn-outline-danger btn-sm">X</button></span></a>
               </form> -->
               <!--  } else { ?> -->
-                <a href="/category/show/<?php echo $category['name'] ?>" class="list-group-item list-group-item-action"><?php echo $category['name'] ?></a>
+                <a href="/post/category/<?php echo $category['name'] ?>" class="list-group-item list-group-item-action"><?php echo $category['name'] ?></a>
               <!--  } ?> -->
             <?php } ?>
         </div>

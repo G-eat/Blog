@@ -12,9 +12,9 @@
         <h3 class="text-center">Articles</h3>
         <div class="list-group">
           <?php foreach ($this->data['articles'] as $article) { ?>
-              <div class="list-group-item list-group-item-action">
+              <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action">
                 <?php echo $article['title'] ?>
-              </div>
+            </a>
             <?php } ?>
         </div>
       </div>

@@ -61,11 +61,41 @@ class PostController extends Controller {
 
     public function individual($slug) {
       $article = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"]]);
+      $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
       $this->view('post\individual',[
         'article' => $article,
-        'page' => 'Individual'
+        'page' => 'Individual',
+        'author_articles' => $author_articles
       ]);
       $this->view->render();
+    }
+
+    public function user($name) {
+        $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
+        $this->view('post\user',[
+          'articles' => $articles,
+          'author' => $name
+        ]);
+        $this->view->render();
+    }
+
+    public function category($category) {
+      $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"]]);
+      if (count($articles)) {
+          $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"]]);
+          $this->view('post\category',[
+            'articles' => $articles,
+            'category_articles' => $category_articles,
+            'category' => $category
+          ]);
+          $this->view->render();
+      } else {
+          $this->view('post\category',[
+              'articles' => $articles,
+              'category' => $category
+          ]);
+          $this->view->render();
+      }
     }
 
     // public function addpost() {

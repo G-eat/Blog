@@ -55,10 +55,6 @@ class CategoryController extends Controller {
       Controller::redirect('/admin/categories');
     }
   }
-
-  public function show($value='') {
-    echo $value;
-  }
 }
 
 ?>
