@@ -44,9 +44,13 @@ class AdminController extends Controller {
         Database::update(['articles'],[['position','=',"'".$num."'"]],[['id','=',"'".$position."'"]]);
         $num ++;
       }
+  }
 
-
-      // Controller::redirect('/admin/article');
+  public function publish() {
+      $is_publish = $_POST['is_publish'];
+      $id = $_POST['id'];
+      Database::update(['articles'],[['is_published','=',"'".$is_publish."'"]],[['id','=',"'".$id."'"]]);
+      Controller::redirect('/admin/articles');
   }
 
 }

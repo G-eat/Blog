@@ -13,6 +13,13 @@
               <h3 class="text-center">Post of <?php echo $this->data['author'] ?></h3>
           <?php } ?>
         <?php foreach ($this->data['articles'] as $article) { ?>
+            <?php if (isset($_SESSION['user']) && $this->data['author'] == $_SESSION['user']): ?>
+                <?php if ($article['is_published'] == 'pending'){ ?>
+                    <span><?php echo $article['is_published'] ?></span>
+                <?php } else { ?>
+                    <span class="<?php echo ($article['is_published'] == 'Publish') ? 'text-success':'text-danger'?>"><?php echo $article['is_published'] ?></span>
+                <?php } ?>
+            <?php endif; ?>
           <div class="card mb-3">
             <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" style="width:70%;height:50%;margin:auto" alt="Card image cap">
             <div class="card-body">

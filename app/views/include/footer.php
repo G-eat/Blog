@@ -27,7 +27,6 @@
         $('#sortable').sortable({
           update: function (event,ui) {
             let positions = $("#sortable").sortable("toArray");
-            console.log(positions);
 
             $.ajax({
                      url: "position",
@@ -40,9 +39,9 @@
           }
         });
     </script>
-    <!-- <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
     <script>
         CKEDITOR.replace( 'body-editor1' );
-    </script> -->
+    </script>
   </body>
 </html>

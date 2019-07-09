@@ -14,6 +14,19 @@
           <?php foreach ($this->data['articles'] as $article) { ?>
               <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action" id="<?php echo $article['id'] ?>">
                 <?php echo $article['title'] ?>
+                <span style="float:right">
+                <?php if ($article['is_published'] == 'pending'){ ?>
+                        <form action="/admin/publish" method="post">
+                            <input type="hidden" name="id" value="<?php echo $article['id'] ?>">
+                            <input class="btn btn-success" type="submit" name="is_publish" value="Publish">
+                            <input class="btn btn-danger" type="submit" name="is_publish" value="Reject">
+                        </form>
+                <?php } elseif($article['is_published'] == 'Publish') { ?>
+                    <p class="text-success">Publish</p>
+                <?php } else { ?>
+                    <p class="text-danger">Reject</p>
+                <?php } ?>
+            </span>
             </a>
             <?php } ?>
         </div>

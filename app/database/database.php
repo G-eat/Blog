@@ -122,7 +122,7 @@ class Database implements DBInterface {
             }
           }
         }
-
+        
         self::connect();
         $query = self::$db->prepare($mysql);
         $query->execute();
@@ -257,7 +257,7 @@ class Database implements DBInterface {
         }
       }
 
-
+        // echo $mysql;
         self::connect();
         $query = self::$db->prepare($mysql);
         $data = $query->execute();

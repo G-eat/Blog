@@ -14,8 +14,8 @@ class PostController extends Controller {
         $id = 1;
      }
       $categories = Database::select(['*'],['categories']);
-      $articles = Database::select(['*'],['articles'],null,null,null,[$limit_from,'5']);
-      $all_articles = Database::select(['*'],['articles']);
+      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,null,[$limit_from,'5']);
+      $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
       $nr_page = ceil(count($all_articles)/5);
 
       if ($articles == null) {
@@ -80,6 +80,10 @@ class PostController extends Controller {
 
     public function individual($slug) {
       $article = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"]]);
+      $article_ispublish = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"],['AND'],['is_published','=','"Publish"']]);
+      if (count($article_ispublish) == 0 && $article[0]['author'] !== $_SESSION['user']) {
+          Controller::redirect('/post/index');
+      }
       $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
       $this->view('post\individual',[
         'article' => $article,
@@ -90,7 +94,11 @@ class PostController extends Controller {
     }
 
     public function user($name) {
-        $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
+        if (isset($_SESSION['user']) && $name == $_SESSION['user']) {
+            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
+        } else {
+            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']]);
+        }
         $this->view('post\user',[
           'articles' => $articles,
           'author' => $name
@@ -125,7 +133,7 @@ class PostController extends Controller {
         if ($msg !== '' || !isset($_POST['search'])) {
             Controller::redirect('/post/index');
         }
-        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"']]);
+        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
         $this->view('post\search',[
             'articles' => $articles,
             'search' => $search
