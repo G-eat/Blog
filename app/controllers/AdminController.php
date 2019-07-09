@@ -28,11 +28,25 @@ class AdminController extends Controller {
   }
 
   public function articles() {
-    $data = Database::select(['*'],['articles']);
+    $data = Database::select(['*'],['articles'],null,null,['position']);
     $this->view('admin\articles',[
       'articles' => $data
     ]);
     $this->view->render();
+  }
+
+  public function position() {
+      $positions = $_POST['positions'];
+
+      $num = 1;
+
+      foreach ($positions as $position) {
+        Database::update(['articles'],[['position','=',"'".$num."'"]],[['id','=',"'".$position."'"]]);
+        $num ++;
+      }
+
+
+      // Controller::redirect('/admin/article');
   }
 
 }
