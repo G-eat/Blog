@@ -4,12 +4,31 @@
  */
 class PostController extends Controller {
 
-    public function index($msg='') {
+    public function index($id='') {
+      if ($id == '' || $id == 1) {
+         $limit_from = 0;
+     } else {
+         $limit_from = ($id - 1) * 5;
+     }
+     if ($id =='') {
+        $id = 1;
+     }
       $categories = Database::select(['*'],['categories']);
-      $articles = Database::select(['*'],['articles']);
+      $articles = Database::select(['*'],['articles'],null,null,null,[$limit_from,'5']);
+      $all_articles = Database::select(['*'],['articles']);
+      $nr_page = ceil(count($all_articles)/5);
+
+      if ($articles == null) {
+         $error = 'Error! There are no link like this.';
+     } else {
+         $error = '';
+     }
       $this->view('post\index',[
         'categories' => $categories,
-        'articles' => $articles
+        'articles' => $articles,
+        'error' => $error,
+        'nr_page' => $nr_page,
+        'page_current' => $id
       ]);
       $this->view->render();
     }
@@ -96,6 +115,22 @@ class PostController extends Controller {
           ]);
           $this->view->render();
       }
+    }
+
+    public function search($msg='') {
+        $search = $_POST['search'];
+        if ($_POST['search'] == '') {
+            Controller::redirect('/post/index');
+        }
+        if ($msg !== '' || !isset($_POST['search'])) {
+            Controller::redirect('/post/index');
+        }
+        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"']]);
+        $this->view('post\search',[
+            'articles' => $articles,
+            'search' => $search
+        ]);
+        $this->view->render();
     }
 
     // public function addpost() {

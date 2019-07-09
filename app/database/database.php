@@ -117,7 +117,7 @@ class Database implements DBInterface {
             foreach ($limit as $limiti) {
               $mysql .= $limiti;
               if ($limiti !== $lastElement) {
-                $mysql .= ' ';
+                $mysql .= ',';
               }
             }
           }
