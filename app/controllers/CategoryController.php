@@ -23,6 +23,7 @@ class CategoryController extends Controller {
     }else{
       if ($_POST['category_id'] !== '') {
         Database::delete(['categories'],[['id','=',"'".$_POST['category_id']."'"]]);
+        Database::delete(['articles'],[['category','=',"'".$_POST['category_name']."'"]]);
       }
       Controller::redirect('/admin/categories');
     }

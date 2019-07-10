@@ -11,6 +11,9 @@
       echo '<h5 class="alert alert-danger container">'.$this->data['errrors'].'</h5>';
     }
 
+    if (!isset($_SESSION['user'])) {
+        Controller::redirect('/post/index');
+    }
 ?>
   <div class="container mt-3">
     <div class="border border-secondary p-5">
@@ -33,6 +36,14 @@
         <div class="form-group">
           <label class="text-info" for="exampleFormControlSelect1">Category :</label>
           <select class="form-control" id="exampleFormControlSelect1" name="category" required>
+            <?php foreach ($this->data['categories'] as $category) { ?>
+              <option <?php echo (isset($this->data['category']) && $this->data['category'] == $category['name']) ? 'selected' :'' ?> value="<?php echo $category['name'] ?>"><?php echo $category['name'] ?></option>
+            <?php } ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="text-info" for="exampleFormControlSelect1">Category :</label>
+          <select class="form-control" id="exampleFormControlSelect1" name="category" multiple required>
             <?php foreach ($this->data['categories'] as $category) { ?>
               <option <?php echo (isset($this->data['category']) && $this->data['category'] == $category['name']) ? 'selected' :'' ?> value="<?php echo $category['name'] ?>"><?php echo $category['name'] ?></option>
             <?php } ?>

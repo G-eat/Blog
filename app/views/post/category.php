@@ -23,9 +23,17 @@
           </div>
         <?php } ?>
       </div>
+      <?php if (isset($this->data['categories'])){ ?>
+          <div class="col-3 border-left" style="position:fixed;right:30px; height: 85vh;overflow: auto">
+              <h3 class="text-center">Categories</h3>
+              <div class="list-group">
+                <?php foreach ($this->data['categories'] as $category) { ?>
+                      <a href="/post/category/<?php echo $category['name'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['category']) && $this->data['category'] == $category['name']) ? 'active':'' ?>"><?php echo $category['name'] ?></a>
+                  <?php } ?>
+              </div>
+      <?php } ?>
       <?php if (isset($this->data['category_articles'])){ ?>
-          <div class="col-3 border-left" style="position:fixed;right:30px">
-              <h3 class="text-center">Posts in this category</h3>
+              <h3 class="text-center mt-3">Posts in this category</h3>
               <div class="list-group">
                   <?php foreach ($this->data['category_articles'] as $article) { ?>
                       <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action"><?php echo $article['title'] ?></a>

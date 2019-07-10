@@ -111,18 +111,21 @@ class PostController extends Controller {
 
     public function category($category) {
       $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"],['AND'],['is_published','=',"'Publish'"]]);
+      $categories = Database::select(['*'],['categories']);
       if (count($articles)) {
           $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"],['AND'],['is_published','=',"'Publish'"]]);
           $this->view('post\category',[
             'articles' => $articles,
             'category_articles' => $category_articles,
-            'category' => $category
+            'category' => $category,
+            'categories' => $categories
           ]);
           $this->view->render();
       } else {
           $this->view('post\category',[
               'articles' => $articles,
-              'category' => $category
+              'category' => $category,
+              'categories' => $categories
           ]);
           $this->view->render();
       }

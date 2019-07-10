@@ -24,9 +24,10 @@
           <h3 class="text-center">Other Post of this author</h3>
           <div class="list-group">
               <?php foreach ($this->data['author_articles'] as $author_article) { ?>
-                  <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action"><?php echo $author_article['title'] ?></a>
+                  <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['article'][0]['title']) && $this->data['article'][0]['title'] == $author_article['title']) ? 'active':'' ?>"><?php echo $author_article['title'] ?></a>
               <?php } ?>
           </div>
+          <a href="/post/category/<?php echo $this->data['article'][0]['category'] ?>" class="btn btn-secondary mt-3">Go to category</a>
       </div>
     </div>
   </div>
