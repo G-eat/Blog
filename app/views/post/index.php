@@ -6,7 +6,15 @@
     <div class="row">
       <div class="col-9 border-right">
         <?php  include '../app/views/include/search.php'; ?>
-        <h3 class="text-center mt-3">Articles</h3>
+        <h3 class="mt-3" style="float:left">Articles</h3>
+        <form method="post" action='/post/index' style="margin-top:50px">
+            <input type="submit" name="submit" class="btn btn-sm btn-secondary ml-3" style="float:right" value="Order">
+            <select id="exampleFormControlSelect1" name="order" style="float:right" required>
+                <option <?php echo (isset($this->data['order']) && $this->data['order'] == 'position') ? 'selected' :'' ?> value="position">Default</option>
+                <option <?php echo (isset($this->data['order']) && $this->data['order'] == 'created_at') ? 'selected' :'' ?> value="created_at">New</option>
+            </select>
+        </form>
+        <div style="clear:both"></div>
         <?php if (isset($this->data['error']) && $this->data['error'] !== ''): ?>
             <h6 class="alert alert-warning"><?php echo $this->data['error'] ?></h6>
         <?php endif; ?>

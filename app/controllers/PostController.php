@@ -14,8 +14,19 @@ class PostController extends Controller {
      if ($id =='') {
         $id = 1;
      }
+
+     if (isset($_POST['order'])) {
+         $_SESSION['order'] = $_POST['order'];
+     }
+
+     if (!isset($_SESSION['order'])) {
+         $order = 'position';
+     } else {
+         $order = $_SESSION['order'];
+     }
+     
       $categories = Database::select(['*'],['categories']);
-      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,null,[$limit_from,'5']);
+      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,'DESC'],[$limit_from,'5']);
       $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
       $nr_page = ceil(count($all_articles)/5);
 
@@ -29,7 +40,8 @@ class PostController extends Controller {
         'articles' => $articles,
         'error' => $error,
         'nr_page' => $nr_page,
-        'page_current' => $id
+        'page_current' => $id,
+        'order' => $order
       ]);
       $this->view->render();
     }
