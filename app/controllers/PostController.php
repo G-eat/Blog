@@ -49,9 +49,11 @@ class PostController extends Controller {
         if ($data[0] == 1) {
           $errrors = 'This slug is not available.';
           $categories = Database::select(['*'],['categories']);
+          $tags = Database::select(['*'],['tags']);
           $this->view('post\createpost',[
             'msg' => $msg,
             'categories' => $categories,
+            'tags' => $tags,
             'errrors' => $errrors,
             'title' => $title,
             'category' => $category,
@@ -64,7 +66,9 @@ class PostController extends Controller {
           $file_destination = '.\postPhoto\\'.$image;
           move_uploaded_file($_FILES['image']['tmp_name'],$file_destination);
           // var_dump($file_destination);
-
+          foreach ($_POST['tags'] as $tags) {
+             Database::insert(['articles_tag'],['tag_name','article_slug'],["'".$tags."'",$slug]);
+          }
 
           Database::insert(['articles'],['author','title','body','slug','category','file_name'],[
             "'".$author."'","'".$title."'","'".$body."'",$slug,"'".$category."'","'".$image."'" ]);
@@ -72,9 +76,11 @@ class PostController extends Controller {
         }
       } else {
         $categories = Database::select(['*'],['categories']);
+        $tags = Database::select(['*'],['tags']);
         $this->view('post\createpost',[
           'msg' => $msg,
           'categories' => $categories,
+          'tags' => $tags,
           'page' => 'CreatePost'
         ]);
         $this->view->render();
@@ -88,9 +94,11 @@ class PostController extends Controller {
           Controller::redirect('/post/index');
       }
       $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
+      $tags = Database::select(['*'],['articles_tag'],[['article_slug','=',"'".$slug."'"]]);
       $this->view('post\individual',[
         'article' => $article,
         'page' => 'Individual',
+        'tags' => $tags,
         'author_articles' => $author_articles
       ]);
       $this->view->render();
@@ -145,6 +153,28 @@ class PostController extends Controller {
             'search' => $search
         ]);
         $this->view->render();
+    }
+
+    public function tag($value='') {
+        $tag = '#'.$value;
+        $datas = Database::select(['*'],['articles_tag'],[['tag_name','=',"'".$tag."'"]]);
+        $articles_id = array();
+        foreach ($datas as $data) {
+            array_push($articles_id,Database::select(['id'],['articles'],[['slug','=',"'".$data['article_slug']."'"]]));
+        }
+        $articles = array();
+        for ($i=0; $i < count($articles_id); $i++) {
+            $data = Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id[$i][0]['id']."'"]]);
+            array_push($articles,$data);
+        }
+        $categories = Database::select(['*'],['categories']);
+        $this->view('post\tag',[
+            'articles' => $articles,
+            'categories' => $categories,
+            'tag' => $tag
+        ]);
+        $this->view->render();
+
     }
 
     // public function addpost() {

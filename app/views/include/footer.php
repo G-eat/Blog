@@ -45,10 +45,5 @@
             CKEDITOR.replace( 'body-editor1' );
         </script>
     <?php endif; ?>
-    <script>
-  $('#bs').materialSelect({
-    BSsearchIn: true
-  });
-</script>
   </body>
 </html>
