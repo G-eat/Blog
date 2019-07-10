@@ -39,9 +39,11 @@
           }
         });
     </script>
-    <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace( 'body-editor1' );
-    </script>
+    <?php if (isset($this->data['page']) && $this->data['page'] == 'CreatePost'): ?>
+        <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace( 'body-editor1' );
+        </script>
+    <?php endif; ?>
   </body>
 </html>

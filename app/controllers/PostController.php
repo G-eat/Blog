@@ -5,6 +5,7 @@
 class PostController extends Controller {
 
     public function index($id='') {
+      User::isSetRemmember_me();
       if ($id == '' || $id == 1) {
          $limit_from = 0;
      } else {
@@ -55,7 +56,8 @@ class PostController extends Controller {
             'title' => $title,
             'category' => $category,
             'slug' => Post::slug($_POST['slug']),
-            'body' => $body
+            'body' => $body,
+            'page' => 'CreatePost'
           ]);
           $this->view->render();
         } else {
@@ -72,7 +74,8 @@ class PostController extends Controller {
         $categories = Database::select(['*'],['categories']);
         $this->view('post\createpost',[
           'msg' => $msg,
-          'categories' => $categories
+          'categories' => $categories,
+          'page' => 'CreatePost'
         ]);
         $this->view->render();
       }
@@ -107,9 +110,9 @@ class PostController extends Controller {
     }
 
     public function category($category) {
-      $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"]]);
+      $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"],['AND'],['is_published','=',"'Publish'"]]);
       if (count($articles)) {
-          $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"]]);
+          $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"],['AND'],['is_published','=',"'Publish'"]]);
           $this->view('post\category',[
             'articles' => $articles,
             'category_articles' => $category_articles,

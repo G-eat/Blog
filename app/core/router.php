@@ -5,7 +5,7 @@
  */
 class Router {
   protected $controller = 'PostController';
-  protected $action = 'login';
+  protected $action = 'index';
   protected $params = [];
 
   public function __construct() {

@@ -29,7 +29,7 @@ class User extends Database {
     return strtotime($expire_at) < time();
   }
 
-  // login post
+  // login user
   public function logIn($password,$username,$remmeberme) {
     User::validatelogin($password,$username);
     $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
@@ -45,7 +45,7 @@ class User extends Database {
       if ($remmeberme == 1) {
         USER::remmmemberLogin($_POST['username']);
       }
-      Controller::redirect('/post/index/success');
+      Controller::redirect('/post/index');
     } else {
       return $this->errors;
     }
