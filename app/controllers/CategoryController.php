@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Category
  */
 class CategoryController extends Controller {
 

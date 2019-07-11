@@ -41,13 +41,12 @@ class CommentController extends Controller {
             $author = $_POST['author'];
             $comment = $_POST['update_comment'];
             $slug = $_POST['comment_slug'];
-            echo $article_id . $author . $comment . $slug;
 
             if (!isset($_SESSION['user']) || $author !== $_SESSION['user']) {
                 Controller::redirect('/post/index');
             }
 
-            Database::update(['comments'],[['comment','=',"'".$comment."'"]],[['id','=',"'".$comment_id."'"]]);
+            Database::update(['comments'],[['comment','=',"'".$comment."'"],['accepted','=',"'pending'"]],[['id','=',"'".$comment_id."'"]]);
             Controller::redirect('/post/individual/'.$slug);
         } else {
             Controller::redirect('/post/index');

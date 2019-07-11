@@ -43,6 +43,14 @@
     </div>
   </div>
 
+  <nav aria-label="...">
+    <ul class="pagination container">
+        <?php for ($i=1; $i <= $this->data['nr_page']; $i++) { ?>
+            <li class="page-item <?php echo ($this->data['page_current'] == $i) ? 'active':'' ?>"><a class="page-link" href="/post/user/<?php echo $this->data['author'] ?>/<?php echo $i ?>"><?php echo $i ?></a></li>
+        <?php } ?>
+    </ul>
+  </nav>
+
  <?php
     include '../app/views/include/footer.php';
   ?>

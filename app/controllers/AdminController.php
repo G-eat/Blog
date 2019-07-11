@@ -74,6 +74,15 @@ class AdminController extends Controller {
       Controller::redirect('/post/individual/'.$data[0]['slug']);
   }
 
+  public function tags() {
+      $tags = Database::select(['*'],['tags']);
+
+      $this->view('admin\tags',[
+        'tags' => $tags
+      ]);
+      $this->view->render();
+  }
+
 }
 
 ?>

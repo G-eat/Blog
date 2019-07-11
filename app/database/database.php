@@ -122,7 +122,7 @@ class Database implements DBInterface {
             }
           }
         }
-        
+
         // var_dump($mysql);
         self::connect();
         $query = self::$db->prepare($mysql);
@@ -237,7 +237,6 @@ class Database implements DBInterface {
               $mysql .= ' ';
             }
           }
-          echo $nr . $nrIValues;
         }
       }
 

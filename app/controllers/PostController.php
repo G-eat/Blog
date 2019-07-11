@@ -31,6 +31,7 @@ class PostController extends Controller {
          $by = 'ASC';
      }
 
+
       $categories = Database::select(['*'],['categories']);
       $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,$by],[$limit_from,'5']);
       $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
@@ -126,15 +127,35 @@ class PostController extends Controller {
       $this->view->render();
     }
 
-    public function user($name) {
-        if (isset($_SESSION['user']) && $name == $_SESSION['user']) {
-            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
-        } else {
-            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']]);
+    public function user($name , $id = '') {
+        if ($id == '' || $id == 1) {
+               $limit_from = 0;
+           } else {
+               $limit_from = ($id - 1) * 5;
+           }
+        if ($id =='') {
+           $id = 1;
         }
+
+        if (isset($_SESSION['user']) && $name == $_SESSION['user']) {
+            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]],null,null,[$limit_from,'5']);
+            $all_articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
+            $nr_page = ceil(count($all_articles)/5);
+        } else {
+            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']],null,null,[$limit_from,'5']);
+            $all_articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']]);
+            $nr_page = ceil(count($all_articles)/5);
+        }
+
+        if ($id > $nr_page) {
+            Controller::redirect('/post/user/'.$name);
+        }
+
         $this->view('post\user',[
           'articles' => $articles,
-          'author' => $name
+          'author' => $name,
+          'nr_page' => $nr_page,
+          'page_current' => $id
         ]);
         $this->view->render();
     }
@@ -183,6 +204,10 @@ class PostController extends Controller {
         $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']],null,null,[$limit_from,'1']);
         $all_articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
         $nr_page = ceil(count($all_articles)/1);
+
+        if ($id > $nr_page) {
+            Controller::redirect('/post/search/'.$search.'/1');
+        }
 
         $this->view('post\search',[
             'articles' => $articles,
