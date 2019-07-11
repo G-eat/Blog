@@ -12,12 +12,14 @@ class UserController extends Controller {
       $user = new User;
       $remmeberme = isset($_POST['remmember_me']);
       $user->logIn($_POST['password'],$_POST['username'],$remmeberme);
+
       $this->view('user\index',[
         'page' => 'LogIn',
         'error' => $user->errors,
         'username' => $_POST['username'],
         'msg' => ''
       ]);
+
       $this->view->render();
       //login method get
     } else {
@@ -35,12 +37,14 @@ class UserController extends Controller {
       if (isset($_POST['submit'])) {
         $user = new User;
         $user->save($_POST['password'],$_POST['confirmpassword'],$_POST['username'],$_POST['email']);
+
         $this->view('user\register',[
           'page' => 'Register',
           'error' => $user->errors,
           'username' => $_POST['username'],
           'email' => $_POST['email']
         ]);
+
         $this->view->render();
         //register get method
       } else {

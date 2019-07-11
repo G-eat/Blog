@@ -24,6 +24,39 @@
             </div>
           </div>
         </div>
+        <?php if (isset($_SESSION['user'])){ ?>
+            <h6 class="mt-5">Leave a commment :</h6>
+            <form action="/comment/add" method="post">
+                <div class="input-group">
+                    <input type="hidden" name="author" value="<?php echo $_SESSION['user'] ?>">
+                    <input type="hidden" name="article_id" value="<?php echo $this->data['article'][0]['id'] ?>">
+                    <input type="hidden" name="article_slug" value="<?php echo $this->data['article'][0]['slug'] ?>">
+                    <input type="text" class="form-control" name="comment" placeholder="Comment..." required>
+                    <input type="submit" class="input-group-prepend" name="submit" value="Comment">
+                </div>
+            </form>
+        <?php } else { ?>
+            <span class="text-muted">LogIn to leave a comment.</span><a href="/user/login">LogIN</a>
+        <?php } ?>
+        <h1 class="mt-3 text-info">All Comments</h1>
+        <?php foreach ($this->data['comments'] as $comment): ?>
+            <div class="card border border-danger">
+              <div class="card-header text-info">
+                <?php echo $comment['author'] ?>
+              </div>
+              <div class="card-body">
+                  <h5 class="card-title"><?php echo $comment['comment'] ?></h5>
+                  <p class="card-text text-muted"><?php echo $comment['created_at'] ?>
+                      <?php if ((isset($_SESSION['user']) && $_SESSION['user'] === $comment['author']) || isset($_SESSION['admin'])): ?>
+                          <a href='/comment/delete/<?php echo $comment['id'] ?>/<?php echo $this->data['article'][0]['slug'] ?>' style="float:right">Delete</a>
+                          <a data-toggle="modal" class="open-AddBookDialog mr-3" data-id="<?php echo $comment['id'] ?>" data-slug="<?php echo $this->data['article'][0]['slug'] ?>"
+                          data-comment="<?php echo $comment['comment'] ?>" data-target="#exampleModal" style="float:right;cursor:pointer;">Update</a>
+                      <?php endif; ?>
+                  </p>
+              </div>
+            </div>
+            <br>
+        <?php endforeach; ?>
       </div>
       <div class="col-3 border-left" style="position:fixed;right:30px">
           <h3 class="text-center">Other Post of this author</h3>
@@ -32,11 +65,39 @@
                   <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['article'][0]['title']) && $this->data['article'][0]['title'] == $author_article['title']) ? 'active':'' ?>"><?php echo $author_article['title'] ?></a>
               <?php } ?>
           </div>
-          <a href="/post/category/<?php echo $this->data['article'][0]['category'] ?>" class="btn btn-secondary mt-3">Go to category</a>
+          <?php if (!$this->data['article'][0]['category'] == null): ?>
+              <a href="/post/category/<?php echo $this->data['article'][0]['category'] ?>" class="btn btn-secondary mt-3">Go to category</a>
+          <?php endif; ?>
       </div>
     </div>
   </div>
 
+  <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Update comment</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <div class="modal-body">
+                  <form action="/comment/update" method="post">
+                      <div class="input-group">
+                          <input type="hidden" name="author" value="<?php echo $_SESSION['user'] ?>">
+                          <input type="hidden" name="update_id" value="" id='id'>
+                          <input type="hidden" name="comment_slug" value="" id='slug'>
+                          <input type="text" class="form-control" name="update_comment" value="" id='comment' required>
+                          <input type="submit" class="input-group-prepend" name="submit" value="Update">
+                      </div>
+                  </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
  <?php
     include '../app/views/include/footer.php';

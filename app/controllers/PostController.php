@@ -24,7 +24,7 @@ class PostController extends Controller {
      } else {
          $order = $_SESSION['order'];
      }
-     
+
       $categories = Database::select(['*'],['categories']);
       $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,'DESC'],[$limit_from,'5']);
       $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
@@ -107,12 +107,16 @@ class PostController extends Controller {
       }
       $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
       $tags = Database::select(['*'],['articles_tag'],[['article_slug','=',"'".$slug."'"]]);
+      $comments = Database::select(['*'],['comments'],[['article_id','=',"'".$article[0]['id']."'"]]);
+
       $this->view('post\individual',[
         'article' => $article,
         'page' => 'Individual',
         'tags' => $tags,
+        'comments' => $comments,
         'author_articles' => $author_articles
       ]);
+
       $this->view->render();
     }
 
@@ -180,11 +184,13 @@ class PostController extends Controller {
             array_push($articles,$data);
         }
         $categories = Database::select(['*'],['categories']);
+
         $this->view('post\tag',[
             'articles' => $articles,
             'categories' => $categories,
             'tag' => $tag
         ]);
+
         $this->view->render();
 
     }

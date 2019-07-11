@@ -39,6 +39,15 @@
           }
         });
     </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".open-AddBookDialog").click(function () {
+                $("#id").val( $(this).data('id') );
+                $("#slug").val( $(this).data('slug') );
+                $("#comment").val( $(this).data('comment') );
+            });
+        });
+    </script>
     <?php if (isset($this->data['page']) && $this->data['page'] == 'CreatePost'): ?>
         <script src="https://cdn.ckeditor.com/4.12.1/full-all/ckeditor.js"></script>
         <script>
