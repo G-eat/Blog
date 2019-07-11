@@ -113,7 +113,7 @@ class PostController extends Controller {
       }
       $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
       $tags = Database::select(['*'],['articles_tag'],[['article_slug','=',"'".$slug."'"]]);
-      $comments = Database::select(['*'],['comments'],[['article_id','=',"'".$article[0]['id']."'"]]);
+      $comments = Database::select(['*'],['comments'],[['article_id','=',"'".$article[0]['id']."'"],['AND'],['accepted','=','"Accepted"']]);
 
       $this->view('post\individual',[
         'article' => $article,

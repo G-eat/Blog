@@ -53,6 +53,27 @@ class AdminController extends Controller {
       Controller::redirect('/admin/articles');
   }
 
+  public function comments() {
+    $comments = Database::select(['*'],['comments']);
+
+    $this->view('admin\comments',[
+      'comments' => $comments
+    ]);
+    $this->view->render();
+  }
+
+  public function accept() {
+      $is_accepted = $_POST['is_accepted'];
+      $id = $_POST['id'];
+      Database::update(['comments'],[['accepted','=',"'".$is_accepted."'"]],[['id','=',"'".$id."'"]]);
+      Controller::redirect('/admin/comments');
+  }
+
+  public function post($id) {
+      $data = Database::select(['*'],['articles'],[['id','=',"'".$id."'"]]);
+      Controller::redirect('/post/individual/'.$data[0]['slug']);
+  }
+
 }
 
 ?>

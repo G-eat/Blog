@@ -11,6 +11,7 @@
       <a href="/admin/categories" class="list-group-item list-group-item-action">Categories</a>
       <a href="/admin/users" class="list-group-item list-group-item-action">Users</a>
       <a href="/admin/articles" class="list-group-item list-group-item-action">Articles</a>
+      <a href="/admin/comments" class="list-group-item list-group-item-action">Comments</a>
     </div>
   </div>
 
