@@ -4,7 +4,7 @@
  */
 class PostController extends Controller {
 
-    public function index($id='') {
+    public function index($order = '' , $id='') {
       User::isSetRemmember_me();
       if ($id == '' || $id == 1) {
          $limit_from = 0;
@@ -15,18 +15,31 @@ class PostController extends Controller {
         $id = 1;
      }
 
-     if (isset($_POST['order'])) {
-         $_SESSION['order'] = $_POST['order'];
+     if (isset($_POST['created_at'])) {
+         Controller::redirect('/post/index/created_at');
      }
 
-     if (!isset($_SESSION['order'])) {
-         $order = 'position';
-     } else {
-         $order = $_SESSION['order'];
+     if ($order === '') {
+        Controller::redirect('/post/index/position');
      }
+
+     if ($order === 'created_at') {
+         $order = 'created_at';
+         $by = 'DESC';
+     } else {
+         $order = 'position';
+         $by = 'ASC';
+     }
+
+
+     // if (!isset($_SESSION['order'])) {
+     //     $order = 'position';
+     // } else {
+     //     $order = $_SESSION['order'];
+     // }
 
       $categories = Database::select(['*'],['categories']);
-      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,'DESC'],[$limit_from,'5']);
+      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,$by],[$limit_from,'5']);
       $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
       $nr_page = ceil(count($all_articles)/5);
 

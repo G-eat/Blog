@@ -7,12 +7,10 @@
       <div class="col-9 border-right">
         <?php  include '../app/views/include/search.php'; ?>
         <h3 class="mt-3" style="float:left">Articles</h3>
-        <form method="post" action='/post/index' style="margin-top:50px">
-            <input type="submit" name="submit" class="btn btn-sm btn-secondary ml-3" style="float:right" value="Order">
-            <select id="exampleFormControlSelect1" name="order" style="float:right" required>
-                <option <?php echo (isset($this->data['order']) && $this->data['order'] == 'position') ? 'selected' :'' ?> value="position">Default</option>
-                <option <?php echo (isset($this->data['order']) && $this->data['order'] == 'created_at') ? 'selected' :'' ?> value="created_at">New</option>
-            </select>
+        <form method="post" action='/post/index' style="margin-top:30px">
+            <input type="submit" name="position" class="btn btn-sm btn-dark ml-1" style="float:right" value="Default">
+            <input type="submit" name="created_at" class="btn btn-sm btn-secondary ml-3" style="float:right" value="New">
+            <label style="float:right">OrderBy:</label>
         </form>
         <div style="clear:both"></div>
         <?php if (isset($this->data['error']) && $this->data['error'] !== ''): ?>
@@ -59,7 +57,7 @@
   <nav aria-label="...">
     <ul class="pagination container">
         <?php for ($i=1; $i <= $this->data['nr_page']; $i++) { ?>
-            <li class="page-item <?php echo ($this->data['page_current'] == $i) ? 'active':'' ?>"><a class="page-link" href="/post/index/<?php echo $i ?>"><?php echo $i ?></a></li>
+            <li class="page-item <?php echo ($this->data['page_current'] == $i) ? 'active':'' ?>"><a class="page-link" href="/post/index/<?php echo $this->data['order'] ?>/<?php echo $i ?>"><?php echo $i ?></a></li>
         <?php } ?>
     </ul>
   </nav>
