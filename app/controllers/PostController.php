@@ -31,13 +31,6 @@ class PostController extends Controller {
          $by = 'ASC';
      }
 
-
-     // if (!isset($_SESSION['order'])) {
-     //     $order = 'position';
-     // } else {
-     //     $order = $_SESSION['order'];
-     // }
-
       $categories = Database::select(['*'],['categories']);
       $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,$by],[$limit_from,'5']);
       $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
@@ -168,18 +161,34 @@ class PostController extends Controller {
       }
     }
 
-    public function search($msg='') {
-        $search = $_POST['search'];
-        if ($_POST['search'] == '') {
+    public function search($search='', $id = '') {
+        if ($search !== '' && !isset($_POST['search'])) {
+            $search = $search;
+        } elseif (!isset($_POST['search']) || $_POST['search'] == '') {
             Controller::redirect('/post/index');
+        } else {
+            $search = $_POST['search'];
         }
-        if ($msg !== '' || !isset($_POST['search'])) {
-            Controller::redirect('/post/index');
+
+        if ($id == '' || $id == 1) {
+           $limit_from = 0;
+        } else {
+           $limit_from = ($id - 1) * 1;
         }
-        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
+        if ($id =='') {
+          $id = 1;
+        }
+
+
+        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']],null,null,[$limit_from,'1']);
+        $all_articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
+        $nr_page = ceil(count($all_articles)/1);
+
         $this->view('post\search',[
             'articles' => $articles,
-            'search' => $search
+            'search' => $search,
+            'nr_page' => $nr_page,
+            'page_current' => $id,
         ]);
         $this->view->render();
     }
