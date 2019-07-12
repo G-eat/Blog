@@ -114,18 +114,6 @@ class UserController extends Controller {
     $this->view->render();
   }
 
-
-  //confirm email with form
-  // public function confirmationemail() {
-  //   $username = $_POST['username'];
-  //   $password = md5($_POST['password']);
-  //   $token = $_POST['token'];
-  //
-  //   $isCoonfirmation = User::confirmationemail($username,$password,$token);
-  //   echo $isCoonfirmation;
-  // }
-
-
   public function logOut() {
     // If you are using session_name("something"), don't forget it now!
     session_start();
@@ -148,7 +136,7 @@ class UserController extends Controller {
       // delete  cookie
       $cookie = $_COOKIE['remmember_me'];
       setcookie('remmember_me','',time() - 3600,'/');
-      Database::delete(['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+      User::deleteCookie($cookie);
       }
 
     // Finally, destroy the session.

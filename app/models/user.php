@@ -266,42 +266,13 @@ class User extends Database {
       for ($i = 0; $i < $length; $i++) {
           $randomString .= $characters[rand(0, $charactersLength - 1)];
       }
-      
+
       return $randomString;
     }
 
-
-
-  // // confirma email with link
-  // public function confirmationemail($username,$password,$token) {
-  //   $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = ? AND `password` = ? AND `token` = ?';
-  //   $data = USER::confirm($mysql,$username,$password,$token);
-  //
-  //   if ($data[0] == 1) {
-  //     $mysql = 'UPDATE `users` SET `token`= 1 WHERE `username` = ?';
-  //     User::updatetokentrue($mysql,$username);
-  //   } else {
-  //     echo 'Error';
-  //   }
-  // }
-  //
-  // public function confirm($mysql,$username,$password,$token) {
-  //   self::connect();
-  //   $query = self::$db->prepare($mysql);
-  //   $query->execute([$username,$password,$token]);
-  //   return  $query->fetch();
-  // }
-  //
-  // public function updatetokentrue($mysql,$username) {
-  //   self::connect();
-  //   $query = self::$db->prepare($mysql);
-  //   $query->execute([$username]);
-  //
-  //   session_regenerate_id(true);
-  //
-  //   $_SESSION['user'] = $username;
-  //   Controller::redirect('/user/login/success');
-  // }
+    public function deleteCookie($cookie) {
+        return Database::delete(['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+    }
 
 
 }
