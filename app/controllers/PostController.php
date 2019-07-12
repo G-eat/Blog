@@ -201,28 +201,6 @@ class PostController extends Controller {
         $this->view->render();
     }
 
-    // public function addpost() {
-    //   $slug = "'".Post::slug($_POST['slug'])."'";
-    //   $mysql = 'SELECT COUNT(*) FROM `articles` WHERE `slug` = '.$slug;
-    //   $data = Database::raw($mysql);
-    //   var_dump($data[0]);
-    //   // var_dump($mysql);
-    //
-    //   if ($data[0] == 1) {
-    //     Controller::redirect('/post/createpost/error');
-    //   }
-    //
-    //   $author = $_SESSION['user'];
-    //   $title = $_POST['title'];
-    //   $body = $_POST['body-editor1'];
-    //   $category = $_POST['category'];
-    //   $image = $_FILES['image']['name'];
-    //   Database::insert(['articles'],['author','title','body','slug','category','file_name'],[
-    //     "'".$author."'","'".$title."'","'".$body."'",$slug,"'".$category."'","'".$image."'"
-    //   ]);
-    //   Controller::redirect('/post/index');
-    // }
-
 }
 
 ?>

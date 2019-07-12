@@ -15,7 +15,7 @@ class CategoryController extends Controller {
   public function add() {
       if (isset($_POST['submit'])) {
         if ($_POST['add_category'] !== '') {
-          Database::insert(['categories'],['name'],["'".$_POST['add_category']."'"]);
+          Category::insertCategory($_POST['add_category']);
         }
         Controller::redirect('/admin/categories');
       }
@@ -23,16 +23,15 @@ class CategoryController extends Controller {
 
   public function delete() {
       if ($_POST['category_id'] !== '') {
-        Database::delete(['categories'],[['id','=',"'".$_POST['category_id']."'"]]);
-        // Database::delete(['articles'],[['category','=',"'".$_POST['category_name']."'"]]);
-        Database::update(['articles'],[['category','=','null']],[['category','=',"'".$_POST['category_name']."'"]]);
+        Category::deleteCategory($_POST['category_id']);
+        Category::updateArticlesCategoryName($_POST['category_name']);
       }
       Controller::redirect('/admin/categories');
   }
 
   public function update($value='') {
       if (isset($value)) {
-        $data = Database::select(['*'],['categories'],[['id'],['='],["'".$value."'"]]);
+        $data = Category::getCategoryNameById($value);
 
         $this->view('admin\update',[
           'value' => $data
@@ -47,7 +46,7 @@ class CategoryController extends Controller {
       $category_id = $_POST['category_id'];
       $category = $_POST['category'];
 
-      $data = Database::update(['categories'],[['name','=',"'".$category."'"]],[['id','=',"'".$category_id."'"]]);
+      Category::updateCategory($category,$category_id);
       Controller::redirect('/admin/categories');
   }
 

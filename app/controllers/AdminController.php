@@ -15,7 +15,7 @@ class AdminController extends Controller {
   }
 
   public function categories() {
-    $data = Post::getCategories();
+    $data = Admin::getAll('categories');
 
     $this->view('admin\categories',[
       'categories' => $data
@@ -24,7 +24,7 @@ class AdminController extends Controller {
   }
 
   public function users() {
-    $data = Database::select(['*'],['users']);
+    $data = Admin::getAll('users');
 
     $this->view('admin\users',[
       'users' => $data
@@ -33,7 +33,7 @@ class AdminController extends Controller {
   }
 
   public function articles() {
-    $data = Database::select(['*'],['articles'],null,null,['position']);
+    $data = Admin::getAllArticlesByPosition();
 
     $this->view('admin\articles',[
       'articles' => $data
@@ -47,7 +47,7 @@ class AdminController extends Controller {
       $num = 1;
 
       foreach ($positions as $position) {
-        Database::update(['articles'],[['position','=',"'".$num."'"]],[['id','=',"'".$position."'"]]);
+        Admin::updateArticlesPosition($num,$position);
         $num ++;
       }
   }
@@ -57,12 +57,12 @@ class AdminController extends Controller {
       $is_publish = $_POST['is_publish'];
       $id = $_POST['id'];
 
-      Database::update(['articles'],[['is_published','=',"'".$is_publish."'"]],[['id','=',"'".$id."'"]]);
+      Admin::updateArticlesIsPublished($is_publish,$id);
       Controller::redirect('/admin/articles');
   }
 
   public function comments() {
-    $comments = Database::select(['*'],['comments']);
+    $comments = Admin::getAll('comments');
 
     $this->view('admin\comments',[
       'comments' => $comments
@@ -75,18 +75,18 @@ class AdminController extends Controller {
       $is_accepted = $_POST['is_accepted'];
       $id = $_POST['id'];
 
-      Database::update(['comments'],[['accepted','=',"'".$is_accepted."'"]],[['id','=',"'".$id."'"]]);
+      Admin::updateCommentIsAccepted($is_accepted,$id);
       Controller::redirect('/admin/comments');
   }
 
   public function post($id) {
-      $data = Database::select(['*'],['articles'],[['id','=',"'".$id."'"]]);
+      $data = Admin::getArticleById($id);
 
       Controller::redirect('/post/individual/'.$data[0]['slug']);
   }
 
   public function tags() {
-      $tags = Database::select(['*'],['tags']);
+      $tags = Admin::getAll('tags');
 
       $this->view('admin\tags',[
         'tags' => $tags
