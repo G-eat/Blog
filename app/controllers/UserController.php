@@ -19,7 +19,6 @@ class UserController extends Controller {
         'username' => $_POST['username'],
         'msg' => ''
       ]);
-
       $this->view->render();
       //login method get
     } else {
@@ -44,7 +43,6 @@ class UserController extends Controller {
           'username' => $_POST['username'],
           'email' => $_POST['email']
         ]);
-
         $this->view->render();
         //register get method
       } else {
@@ -70,6 +68,7 @@ class UserController extends Controller {
     //reset method Post
     if (isset($_POST['email'])) {
       User::reset();
+
       $this->view('user\reset',[
         'success' => 'Your get the info from email.'
       ]);
@@ -85,6 +84,7 @@ class UserController extends Controller {
   public function resetpassword($token='',$username='',$error = '') {
     $tokenExist = User::tokenExist($token);
     $userExist = User::userExist($username);
+    
     //after posting to rememmber $token and $username
     if(!$tokenExist['reset_token'] || !$userExist['username']) {
       //if isset $_POST

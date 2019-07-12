@@ -26,7 +26,7 @@ class CommentController extends Controller {
         if ($id === '' || $slug === '') {
             Controller::redirect('/post/index');
         }
-        Database::select(['author'],['comments'],[['id','=',"'".$id."'"]]);
+        $data = Database::select(['author'],['comments'],[['id','=',"'".$id."'"]]);
         if ((isset($_SESSION['user']) && $_SESSION['user'] === $data[0]['author']) || isset($_SESSION['admin'])) {
             Database::delete(['comments'],[['id','=',"'".$id."'"]]);
             Controller::redirect('/post/individual/'.$slug);

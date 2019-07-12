@@ -30,6 +30,10 @@ class Post extends Database {
       return $text;
     }
 
+    public function show() {
+        // code...
+    }
+
 }
 
 ?>

@@ -32,7 +32,7 @@ class Database implements DBInterface {
         $mysql = 'SELECT ';
         if ($fields == [''] || $fields == '' || $fields == null) {
           throw new Exception('Field is null.');
-        } elseif($fields == 1) {
+        } elseif ($fields == 1) {
             $mysql .= $fields;
         } else {
           $lastElement = end($fields);
@@ -47,7 +47,7 @@ class Database implements DBInterface {
         $mysql .= ' FROM ';
         if ($tables == null || $tables == [''] || $tables == '') {
           throw new Exception('Table is null.');
-        } elseif($tables == 1) {
+        } elseif ($tables == 1) {
           $mysql .= $tables;
           $mysql .= ' ';
         } else {
@@ -63,7 +63,7 @@ class Database implements DBInterface {
 
         if ($conditions !== null) {
           $mysql .= ' WHERE ';
-          if($conditions == 1) {
+          if ($conditions == 1) {
             foreach ($conditions as $condition) {
               $mysql .= $condition;
               $mysql .= ' ';
@@ -73,14 +73,14 @@ class Database implements DBInterface {
               foreach ($condition as $condition1) {
                 $mysql .= $condition1;
                 $mysql .= ' ';
-            }
-          }
-        }
-      }
+             }
+           }
+         }
+       }
 
         if ($groups !== null) {
           $mysql .= ' GROUP BY ';
-          if($groups == 1) {
+          if ($groups == 1) {
             $mysql .= $groups;
           } else {
             $lastElement = end($groups);
@@ -95,7 +95,7 @@ class Database implements DBInterface {
 
         if ($orders !== null) {
           $mysql .= ' ORDER BY ';
-          if($orders == 1) {
+          if ($orders == 1) {
             $mysql .= $orders;
           } else {
             $lastElement = end($orders);
@@ -110,7 +110,7 @@ class Database implements DBInterface {
 
         if ($limit !== null) {
           $mysql .= ' LIMIT ';
-          if($limit == 1) {
+          if ($limit == 1) {
             $mysql .= $limit;
           } else {
             $lastElement = end($limit);
@@ -140,7 +140,7 @@ class Database implements DBInterface {
         $mysql = 'INSERT INTO ';
         if ($tables == null || $tables == [''] || $tables == '') {
           throw new Exception('Table is null.');
-        } elseif($tables == 1) {
+        } elseif ($tables == 1) {
           $mysql .= $tables;
         } else {
           $lastElement = end($tables);
@@ -155,7 +155,7 @@ class Database implements DBInterface {
         $mysql .= '(';
         if ($values == null || $values == [''] || $values == '') {
           throw new Exception('Table is null.');
-        } elseif($values == 1) {
+        } elseif ($values == 1) {
           $mysql .= $values;
         } else {
           $lastElement = end($values);
@@ -173,7 +173,7 @@ class Database implements DBInterface {
         if ($sequenceName == null || $sequenceName == [''] || $sequenceName == '') {
           throw new Exception('Sequence is null.');
         } else {
-          if($sequenceName == 1) {
+          if ($sequenceName == 1) {
             $mysql .= $sequenceName;
           } else {
             $lastElement = end($sequenceName);
@@ -202,7 +202,7 @@ class Database implements DBInterface {
         $mysql = 'UPDATE ';
         if ($tables == null || $tables == [''] || $tables == '') {
           throw new Exception('Table is null.');
-        } elseif($tables == 1) {
+        } elseif ($tables == 1) {
           $mysql .= $tables;
         } else {
           $lastElement = end($tables);
@@ -216,7 +216,7 @@ class Database implements DBInterface {
 
         $mysql .= ' SET ';
         if ($values !== null) {
-          if($conditions == 1) {
+          if ($conditions == 1) {
             foreach ($values as $value) {
               $mysql .= $value;
               $mysql .= ' ';
@@ -229,33 +229,32 @@ class Database implements DBInterface {
               foreach ($value as $value1) {
                 $mysql .= $value1;
                 $mysql .= ' ';
-            }
-            // $mysql .= '';
-            if ($nr !== $nrIValues) {
-              $mysql .= ',';
-            } else {
-              $mysql .= ' ';
+              }
+              if ($nr !== $nrIValues) {
+                $mysql .= ',';
+              } else {
+                $mysql .= ' ';
+              }
             }
           }
-        }
-      }
+         }
 
         if ($conditions !== null) {
-          $mysql .= ' WHERE ';
-          if($conditions == 1) {
+           $mysql .= ' WHERE ';
+           if ($conditions == 1) {
             foreach ($conditions as $condition) {
               $mysql .= $condition;
               $mysql .= ' ';
             }
-          } else {
+           } else {
             foreach ($conditions as $condition) {
               foreach ($condition as $condition1) {
                 $mysql .= $condition1;
                 $mysql .= ' ';
-            }
-          }
-        }
-      }
+              }
+             }
+           }
+         }
 
         // echo $mysql;
         self::connect();
@@ -272,7 +271,7 @@ class Database implements DBInterface {
         $mysql = 'DELETE FROM ';
         if ($tables == null || $tables == [''] || $tables == '') {
           throw new Exception('Table is null.');
-        } elseif($tables == 1) {
+        } elseif ($tables == 1) {
           $mysql .= $tables;
         } else {
           $lastElement = end($tables);
@@ -282,24 +281,24 @@ class Database implements DBInterface {
               $mysql .= ',';
             }
           }
-        }
+         }
 
         if ($conditions !== null) {
           $mysql .= ' WHERE ';
-          if($conditions == 1) {
+          if ($conditions == 1) {
             foreach ($conditions as $condition) {
               $mysql .= $condition;
               $mysql .= ' ';
             }
-          } else {
-            foreach ($conditions as $condition) {
-              foreach ($condition as $condition1) {
-                $mysql .= $condition1;
-                $mysql .= ' ';
-            }
+           } else {
+             foreach ($conditions as $condition) {
+               foreach ($condition as $condition1) {
+                 $mysql .= $condition1;
+                 $mysql .= ' ';
+               }
+             }
+           }
           }
-        }
-      }
 
 
         self::connect();

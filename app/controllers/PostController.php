@@ -6,14 +6,16 @@ class PostController extends Controller {
 
     public function index($order = '' , $id='') {
       User::isSetRemmember_me();
+
       if ($id == '' || $id == 1) {
          $limit_from = 0;
      } else {
          $limit_from = ($id - 1) * 5;
      }
+
      if ($id =='') {
-        $id = 1;
-     }
+       $id = 1;
+    }
 
      if (isset($_POST['created_at'])) {
          Controller::redirect('/post/index/created_at');
@@ -42,6 +44,7 @@ class PostController extends Controller {
      } else {
          $error = '';
      }
+
       $this->view('post\index',[
         'categories' => $categories,
         'articles' => $articles,
@@ -67,8 +70,10 @@ class PostController extends Controller {
 
         if ($data[0] == 1) {
           $errrors = 'This slug is not available.';
+
           $categories = Database::select(['*'],['categories']);
           $tags = Database::select(['*'],['tags']);
+
           $this->view('post\createpost',[
             'msg' => $msg,
             'categories' => $categories,
@@ -96,6 +101,7 @@ class PostController extends Controller {
       } else {
         $categories = Database::select(['*'],['categories']);
         $tags = Database::select(['*'],['tags']);
+
         $this->view('post\createpost',[
           'msg' => $msg,
           'categories' => $categories,
@@ -109,10 +115,12 @@ class PostController extends Controller {
     public function individual($slug) {
       $article = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"]]);
       $article_ispublish = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"],['AND'],['is_published','=','"Publish"']]);
+
       if (count($article_ispublish) == 0 && $article[0]['author'] !== $_SESSION['user']) {
           Controller::redirect('/post/index');
       }
-      $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"]]);
+
+      $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"],['AND'],['is_published','=','"Publish"']]);
       $tags = Database::select(['*'],['articles_tag'],[['article_slug','=',"'".$slug."'"]]);
       $comments = Database::select(['*'],['comments'],[['article_id','=',"'".$article[0]['id']."'"],['AND'],['accepted','=','"Accepted"']]);
 
@@ -123,16 +131,16 @@ class PostController extends Controller {
         'comments' => $comments,
         'author_articles' => $author_articles
       ]);
-
       $this->view->render();
     }
 
     public function user($name , $id = '') {
         if ($id == '' || $id == 1) {
-               $limit_from = 0;
-           } else {
-               $limit_from = ($id - 1) * 5;
-           }
+           $limit_from = 0;
+        } else {
+           $limit_from = ($id - 1) * 5;
+        }
+
         if ($id =='') {
            $id = 1;
         }
@@ -163,8 +171,10 @@ class PostController extends Controller {
     public function category($category) {
       $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"],['AND'],['is_published','=',"'Publish'"]]);
       $categories = Database::select(['*'],['categories']);
+
       if (count($articles)) {
           $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"],['AND'],['is_published','=',"'Publish'"]]);
+
           $this->view('post\category',[
             'articles' => $articles,
             'category_articles' => $category_articles,
@@ -196,6 +206,7 @@ class PostController extends Controller {
         } else {
            $limit_from = ($id - 1) * 1;
         }
+
         if ($id =='') {
           $id = 1;
         }
@@ -221,15 +232,18 @@ class PostController extends Controller {
     public function tag($value='') {
         $tag = '#'.$value;
         $datas = Database::select(['*'],['articles_tag'],[['tag_name','=',"'".$tag."'"]]);
+
         $articles_id = array();
         foreach ($datas as $data) {
             array_push($articles_id,Database::select(['id'],['articles'],[['slug','=',"'".$data['article_slug']."'"]]));
         }
+
         $articles = array();
         for ($i=0; $i < count($articles_id); $i++) {
             $data = Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id[$i][0]['id']."'"]]);
             array_push($articles,$data);
         }
+
         $categories = Database::select(['*'],['categories']);
 
         $this->view('post\tag',[
@@ -237,9 +251,7 @@ class PostController extends Controller {
             'categories' => $categories,
             'tag' => $tag
         ]);
-
         $this->view->render();
-
     }
 
     // public function addpost() {

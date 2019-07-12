@@ -12,21 +12,24 @@ class Router {
     $this->prepareURL();
 
     if (file_exists(CONTROLLER. $this->controller.'.php')) {
-      $this->controller = new $this->controller;
-      if (empty($this->controller)) {
-        header("Location: /post/index",true,303);
-        exit;
-      }
-      if (method_exists($this->controller,$this->action)) {
-        call_user_func_array([$this->controller,$this->action],$this->params);
-      } else {
-        header("Location: /post/index",true,303);
-        exit;
-      }
-    } else {
-      header("Location: /post/index",true,303);
-      exit;
-    }
+       $this->controller = new $this->controller;
+
+       if (empty($this->controller)) {
+         header("Location: /post/index",true,303);
+         exit;
+       }
+
+       if (method_exists($this->controller,$this->action)) {
+         call_user_func_array([$this->controller,$this->action],$this->params);
+       } else {
+         header("Location: /post/index",true,303);
+         exit;
+       }
+       
+     } else {
+       header("Location: /post/index",true,303);
+       exit;
+     }
   }
 
   protected function prepareURL() {

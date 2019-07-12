@@ -14,9 +14,11 @@ class User extends Database {
       $data = Database::select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
       $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
       $isExpireToken = User::isExpireToken($data[0]['expire_at']);
+
       if ($data_admin[0]['username'] !== ''  && !$isExpireToken) {
         $_SESSION['admin'] = $data_admin[0]['username'];
       }
+
       if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
          $_SESSION['user'] = $data[0]['user_name'];
       } else {
@@ -32,7 +34,9 @@ class User extends Database {
   // login user
   public function logIn($password,$username,$remmeberme) {
     User::validatelogin($password,$username);
+
     $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+
     if ($this->errors == null) {
 
       session_regenerate_id(true);
@@ -42,9 +46,11 @@ class User extends Database {
       if ($data_admin[0]['username'] !== '') {
         $_SESSION['admin'] = $data_admin[0]['username'];
       }
+
       if ($remmeberme == 1) {
         USER::remmmemberLogin($_POST['username']);
       }
+
       Controller::redirect('/post/index');
     } else {
       return $this->errors;
@@ -71,6 +77,7 @@ class User extends Database {
     $expire_at = date('Y-m-d H:i:s',$expiry_token);
 
     setcookie('remmember_me' , $hash_token , $expiry_token , '/');
+
     Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expire_at."'"]);
     $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
     //if is admin set session admin to his name
@@ -84,6 +91,7 @@ class User extends Database {
   // register post
   public function save($password,$confirmpassword,$username,$email){
     User::validateRegister($password,$confirmpassword,$username,$email);
+
     if ($this->errors == null) {
       $md5password = md5($password);
 
@@ -166,12 +174,14 @@ class User extends Database {
 
     if ($data[0] == 1) {
       Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
+
       session_regenerate_id(true);
       $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
       //if is admin set session admin to his name
       if ($data_admin[0]['username'] !== '') {
         $_SESSION['admin'] = $data_admin[0]['username'];
       }
+
       $_SESSION['user'] = $username;
       Controller::redirect('/post/index/success');
     } else {
@@ -182,7 +192,9 @@ class User extends Database {
     //reset password form to get email
     public function reset() {
       $token = User::generateRandomString();
+
       $data = Database::select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
+
       if ($data[0]['username']) {
         User::sendResetMail($data[0]['username'],$data[0]['email'],$token);
         Database::insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
@@ -250,9 +262,11 @@ class User extends Database {
       $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
       $charactersLength = strlen($characters);
       $randomString = '';
+
       for ($i = 0; $i < $length; $i++) {
           $randomString .= $characters[rand(0, $charactersLength - 1)];
       }
+      
       return $randomString;
     }
 
