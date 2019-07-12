@@ -4,46 +4,32 @@
  */
 class PostController extends Controller {
 
-    public function index($order = '' , $id='') {
-      User::isSetRemmember_me();
-
-      if ($id == '' || $id == 1) {
-         $limit_from = 0;
-     } else {
-         $limit_from = ($id - 1) * 5;
+     public function __construct() {
+        User::isSetRemmember_me();
      }
 
-     if ($id =='') {
-       $id = 1;
-    }
-
-     if (isset($_POST['created_at'])) {
+    public function index($order = '' , $id = 1) {
+      if (isset($_POST['created_at'])) {
          Controller::redirect('/post/index/created_at');
-     }
+      }
 
-     if ($order === '') {
+      if ($order === '') {
         Controller::redirect('/post/index/position');
-     }
+      }
 
-     if ($order === 'created_at') {
+      if ($order === 'created_at') {
          $order = 'created_at';
          $by = 'DESC';
-     } else {
+      } else {
          $order = 'position';
          $by = 'ASC';
-     }
+      }
 
-
-      $categories = Database::select(['*'],['categories']);
-      $articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']],null,[$order,$by],[$limit_from,'5']);
-      $all_articles = Database::select(['*'],['articles'],[['is_published','=','"Publish"']]);
-      $nr_page = ceil(count($all_articles)/5);
-
-      if ($articles == null) {
-         $error = 'Error! There are no link like this.';
-     } else {
-         $error = '';
-     }
+      $categories = Post::getAll('categories');
+      $limit_from = Post::limitFrom($id);
+      $articles = Post::getArticles($order,$by,$limit_from,'5');
+      $nr_page = Post::nrPageOfArticle();
+      $error = Post::returnError($articles);
 
       $this->view('post\index',[
         'categories' => $categories,
@@ -56,54 +42,39 @@ class PostController extends Controller {
       $this->view->render();
     }
 
-    public function createpost($msg='') {
+    public function createpost() {
       if (isset($_POST['submit'])) {
         $slug = "'".Post::slug($_POST['slug'])."'";
-        $author = $_SESSION['user'];
-        $title = $_POST['title'];
-        $body = $_POST['body-editor1'];
-        $category = $_POST['category'];
-        $image = uniqid('', true) . '-' .$_FILES['image']['name'];
-
-        $mysql = 'SELECT COUNT(*) FROM `articles` WHERE `slug` = '.$slug;
-        $data = Database::raw($mysql);
+        $data = Post::seeIfArticleSlugExist($slug);
 
         if ($data[0] == 1) {
           $errrors = 'This slug is not available.';
-
-          $categories = Database::select(['*'],['categories']);
-          $tags = Database::select(['*'],['tags']);
+          $categories = Post::getAll('categories');
+          $tags = Post::getAll('tags');
 
           $this->view('post\createpost',[
-            'msg' => $msg,
             'categories' => $categories,
             'tags' => $tags,
             'errrors' => $errrors,
-            'title' => $title,
-            'category' => $category,
+            'title' => $_POST['title'],
+            'category' => $_POST['category'],
             'slug' => Post::slug($_POST['slug']),
-            'body' => $body,
+            'body' => $_POST['body-editor1'],
             'page' => 'CreatePost'
           ]);
           $this->view->render();
         } else {
-          $file_destination = '.\postPhoto\\'.$image;
-          move_uploaded_file($_FILES['image']['tmp_name'],$file_destination);
-          // var_dump($file_destination);
-          foreach ($_POST['tags'] as $tags) {
-             Database::insert(['articles_tag'],['tag_name','article_slug'],["'".$tags."'",$slug]);
-          }
+          $image = Post::uploadPhoto($_FILES['image']['name']);
+          Post::insertTag($_POST['tags'],$slug);
+          Post::insertArticles($_SESSION['user'],$_POST['title'],$_POST['body-editor1'],$slug,$_POST['category'],$image);
 
-          Database::insert(['articles'],['author','title','body','slug','category','file_name'],[
-            "'".$author."'","'".$title."'","'".$body."'",$slug,"'".$category."'","'".$image."'" ]);
           Controller::redirect('/post/index');
         }
       } else {
-        $categories = Database::select(['*'],['categories']);
-        $tags = Database::select(['*'],['tags']);
+        $categories = Post::getAll('categories');
+        $tags = Post::getAll('tags');
 
         $this->view('post\createpost',[
-          'msg' => $msg,
           'categories' => $categories,
           'tags' => $tags,
           'page' => 'CreatePost'
@@ -113,16 +84,12 @@ class PostController extends Controller {
     }
 
     public function individual($slug) {
-      $article = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"]]);
-      $article_ispublish = Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"],['AND'],['is_published','=','"Publish"']]);
+      $article = Post::getArticleWithThisSlug($slug);
+      Post::seeIfArticleIsPublished($slug,$article);
 
-      if (count($article_ispublish) == 0 && $article[0]['author'] !== $_SESSION['user']) {
-          Controller::redirect('/post/index');
-      }
-
-      $author_articles = Database::select(['*'],['articles'],[['author','=',"'".$article[0]['author']."'"],['AND'],['is_published','=','"Publish"']]);
-      $tags = Database::select(['*'],['articles_tag'],[['article_slug','=',"'".$slug."'"]]);
-      $comments = Database::select(['*'],['comments'],[['article_id','=',"'".$article[0]['id']."'"],['AND'],['accepted','=','"Accepted"']]);
+      $author_articles = Post::articleAuthor($article[0]['author']);
+      $tags = Post::tagsWithSameSlug($slug);
+      $comments = Post::commentAccepted($article[0]['id']);
 
       $this->view('post\individual',[
         'article' => $article,
@@ -134,25 +101,15 @@ class PostController extends Controller {
       $this->view->render();
     }
 
-    public function user($name , $id = '') {
-        if ($id == '' || $id == 1) {
-           $limit_from = 0;
-        } else {
-           $limit_from = ($id - 1) * 5;
-        }
-
-        if ($id =='') {
-           $id = 1;
-        }
+    public function user($name , $id = 1) {
+        $limit_from = Post::limitFrom($id);
 
         if (isset($_SESSION['user']) && $name == $_SESSION['user']) {
-            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]],null,null,[$limit_from,'5']);
-            $all_articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"]]);
-            $nr_page = ceil(count($all_articles)/5);
+            $articles = Post::getArticlesWithThisAuthor($name,$limit_from);
+            $nr_page = Post::nrPageOfArticleWithThisAuthor($name);
         } else {
-            $articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']],null,null,[$limit_from,'5']);
-            $all_articles = Database::select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']]);
-            $nr_page = ceil(count($all_articles)/5);
+            $articles = Post::getArticlesWithThisAuthorPublished($name,$limit_from);
+            $nr_page = Post::nrPageOfArticleWithThisAuthorPublished($name);
         }
 
         if ($id > $nr_page) {
@@ -169,11 +126,11 @@ class PostController extends Controller {
     }
 
     public function category($category) {
-      $articles = Database::select(['*'],['articles'],[['category','=',"'".$category."'"],['AND'],['is_published','=',"'Publish'"]]);
-      $categories = Database::select(['*'],['categories']);
+      $articles = Post::getArticlesWithThisCategoryPublished($category);
+      $categories = Post::getAll('categories');
 
       if (count($articles)) {
-          $category_articles = Database::select(['*'],['articles'],[['category','=',"'".$articles[0]['category']."'"],['AND'],['is_published','=',"'Publish'"]]);
+          $category_articles = Post::category_articles($articles[0]['category']);
 
           $this->view('post\category',[
             'articles' => $articles,
@@ -199,22 +156,12 @@ class PostController extends Controller {
             Controller::redirect('/post/index');
         } else {
             $search = $_POST['search'];
+            Controller::redirect('/post/search/'.$search.'/1');
         }
 
-        if ($id == '' || $id == 1) {
-           $limit_from = 0;
-        } else {
-           $limit_from = ($id - 1) * 1;
-        }
-
-        if ($id =='') {
-          $id = 1;
-        }
-
-
-        $articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']],null,null,[$limit_from,'1']);
-        $all_articles = Database::select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
-        $nr_page = ceil(count($all_articles)/1);
+        $limit_from = Post::limitFrom($id);
+        $articles = Post::getArticlesWhereTitleLike($search,$limit_from);
+        $nr_page = Post::getNrPageWhereTitleLike($search);
 
         if ($id > $nr_page) {
             Controller::redirect('/post/search/'.$search.'/1');
@@ -231,20 +178,20 @@ class PostController extends Controller {
 
     public function tag($value='') {
         $tag = '#'.$value;
-        $datas = Database::select(['*'],['articles_tag'],[['tag_name','=',"'".$tag."'"]]);
+        $articles_tag = Post::getArticlesTag($tag);
 
         $articles_id = array();
-        foreach ($datas as $data) {
-            array_push($articles_id,Database::select(['id'],['articles'],[['slug','=',"'".$data['article_slug']."'"]]));
+        foreach ($articles_tag as $article_tag) {
+            array_push($articles_id,Post::getArticlesId($article_tag['article_slug']));
         }
 
         $articles = array();
         for ($i=0; $i < count($articles_id); $i++) {
-            $data = Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id[$i][0]['id']."'"]]);
+            $data = Post::getArticlesWithThisTag($articles_id[$i][0]['id']);
             array_push($articles,$data);
         }
 
-        $categories = Database::select(['*'],['categories']);
+        $categories = Post::getAll('categories');
 
         $this->view('post\tag',[
             'articles' => $articles,

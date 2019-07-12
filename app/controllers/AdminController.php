@@ -15,7 +15,7 @@ class AdminController extends Controller {
   }
 
   public function categories() {
-    $data = Database::select(['*'],['categories']);
+    $data = Post::getCategories();
 
     $this->view('admin\categories',[
       'categories' => $data

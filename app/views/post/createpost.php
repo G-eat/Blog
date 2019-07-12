@@ -3,9 +3,6 @@
 ?>
 <?php
   if (isset($_SESSION['user'])) {
-    if ($this->data['msg'] == 'error') {
-      echo '<h5 class="alert alert-danger container">ERROR.</h5>';
-    }
 
     if (isset($this->data['errrors'])) {
       echo '<h5 class="alert alert-danger container">'.$this->data['errrors'].'</h5>';

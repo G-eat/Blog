@@ -8,6 +8,9 @@ if (!isset($_SESSION['admin'])) {
  * Category
  */
 class CategoryController extends Controller {
+  public function __construct() {
+      User::isSetRemmember_me();
+  }
 
   public function add() {
       if (isset($_POST['submit'])) {
@@ -47,7 +50,7 @@ class CategoryController extends Controller {
       $data = Database::update(['categories'],[['name','=',"'".$category."'"]],[['id','=',"'".$category_id."'"]]);
       Controller::redirect('/admin/categories');
   }
-  
+
 }
 
 ?>

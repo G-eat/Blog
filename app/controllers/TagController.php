@@ -3,6 +3,9 @@
  * Tag
  */
 class TagController extends Controller {
+  public function __construct() {
+     User::isSetRemmember_me();
+  }
 
   public function add() {
     if (!isset($_SESSION['admin'])) {
