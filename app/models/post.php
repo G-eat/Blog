@@ -95,7 +95,7 @@ class Post extends Database {
     }
 
     public function articleAuthor($author) {
-        return Database::select(['*'],['articles'],[['author','=',"'".$author."'"],['AND'],['is_published','=','"Publish"']]);
+        return Database::select(['*'],['articles'],[['author','=',"'".$author."'"],['AND'],['is_published','=','"Publish"']],null,null,['10']);
     }
 
     public function tagsWithSameSlug($slug) {
@@ -129,7 +129,7 @@ class Post extends Database {
     }
 
     public function category_articles($articles_category) {
-        return Database::select(['*'],['articles'],[['category','=',"'".$articles_category."'"],['AND'],['is_published','=',"'Publish'"]]);
+        return Database::select(['*'],['articles'],[['category','=',"'".$articles_category."'"],['AND'],['is_published','=',"'Publish'"]],null,null,['5']);
     }
 
     public function getArticlesWhereTitleLike($search,$limit_from) {
@@ -145,11 +145,15 @@ class Post extends Database {
         return Database::select(['*'],['articles_tag'],[['tag_name','=',"'".$tag."'"]]);
     }
 
-    public function getArticlesId($articles_id) {
-        return Database::select(['id'],['articles'],[['slug','=',"'".$articles_id."'"]]);
+    public function getArticlesId($articles_slug) {
+        return Database::select(['id'],['articles'],[['slug','=',"'".$articles_slug."'"],['AND'],['is_published','=','"Publish"']]);
     }
 
     public function getArticlesWithThisTag($articles_id) {
+        return Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id."'"]]);
+    }
+
+    public function getElement($articles_id) {
         return Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id."'"]]);
     }
 

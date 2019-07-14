@@ -33,7 +33,7 @@
               </div>
       <?php } ?>
       <?php if (isset($this->data['category_articles'])){ ?>
-              <h3 class="text-center mt-3">Posts in this category</h3>
+              <h3 class="text-center mt-3">Some other post</h3>
               <div class="list-group">
                   <?php foreach ($this->data['category_articles'] as $article) { ?>
                       <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action"><?php echo $article['title'] ?></a>

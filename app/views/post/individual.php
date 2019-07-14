@@ -59,14 +59,16 @@
         <?php endforeach; ?>
       </div>
       <div class="col-3 border-left" style="position:fixed;right:30px">
-          <h3 class="text-center">Other Post of this author</h3>
+          <?php if (count($this->data['author_articles']) >= 1): ?>
+              <h3 class="text-center">Other Post of this author</h3>
+          <?php endif; ?>
           <div class="list-group">
               <?php foreach ($this->data['author_articles'] as $author_article) { ?>
                   <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['article'][0]['title']) && $this->data['article'][0]['title'] == $author_article['title']) ? 'active':'' ?>"><?php echo $author_article['title'] ?></a>
               <?php } ?>
           </div>
           <?php if (!$this->data['article'][0]['category'] == null): ?>
-              <a href="/post/category/<?php echo $this->data['article'][0]['category'] ?>" class="btn btn-secondary mt-3">Go to category</a>
+              <a href="/post/category/<?php echo $this->data['article'][0]['category'] ?>" class="btn btn-secondary mt-3">More posts in this category</a>
           <?php endif; ?>
       </div>
     </div>

@@ -112,7 +112,7 @@ class PostController extends Controller {
             $nr_page = Post::nrPageOfArticleWithThisAuthorPublished($name);
         }
 
-        if ($id > $nr_page) {
+        if ($id > 1 && $id > $nr_page) {
             Controller::redirect('/post/user/'.$name);
         }
 
@@ -180,21 +180,32 @@ class PostController extends Controller {
         $tag = '#'.$value;
         $articles_tag = Post::getArticlesTag($tag);
 
-        $articles_id = array();
+
         foreach ($articles_tag as $article_tag) {
-            array_push($articles_id,Post::getArticlesId($article_tag['article_slug']));
+            $article_ids = Post::getArticlesId($article_tag['article_slug']);
+            $article_ids == null ? '' : $articles_id[] = $article_ids;
+
         }
 
         $articles = array();
-        for ($i=0; $i < count($articles_id); $i++) {
-            $data = Post::getArticlesWithThisTag($articles_id[$i][0]['id']);
-            array_push($articles,$data);
+        // $article = '';
+        // if (empty($articles_id[1]) && !empty($articles_id[0])) {
+        //     $article = Post::getElement($articles_id[0][0]['id']);
+        // } elseif (!empty($articles_id[0])) {
+        if (isset($articles_id)) {
+            for ($i = 0; $i < count($articles_id); $i++) {
+                $data = Post::getArticlesWithThisTag($articles_id[$i][0]['id']);
+                $articles[] = $data;
+            }
         }
+
+        // }
 
         $categories = Post::getAll('categories');
 
         $this->view('post\tag',[
             'articles' => $articles,
+            // 'article' => $article,
             'categories' => $categories,
             'tag' => $tag
         ]);

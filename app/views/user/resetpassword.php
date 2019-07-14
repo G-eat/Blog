@@ -31,5 +31,5 @@
   ?>
 
 <?php } else {
-  echo '<h5 class="container">You are logged in.</h5>';
+  Controller::redirect('/post/index');
 } ?>
