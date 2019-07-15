@@ -11,7 +11,7 @@
             <h6 class="alert alert-warning">No posts with those letters.</h6>
         <?php endif; ?>
         <?php foreach ($this->data['articles'] as $article) { ?>
-            <div class="row" style="height:120px">
+            <div class="row" style="height:180px;overflow:hidden">
                 <div class="col-4 mb-3">
                     <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" alt="Card image cap">
                 </div>

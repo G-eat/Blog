@@ -6,6 +6,12 @@ class PostController extends Controller {
 
      public function __construct() {
         User::isSetRemmember_me();
+
+        // $this->model = 'PostController';
+        // $request = trim( $_SERVER['REQUEST_URI'],'/' );
+        // $url = explode( '/',$request );
+        // $this->params = $url[1];
+        // Controller::create($this->model,$this->params);
      }
 
     public function index($order = '' , $id = 1) {
@@ -67,6 +73,8 @@ class PostController extends Controller {
           $image = Post::uploadPhoto($_FILES['image']['name']);
           Post::insertTag($_POST['tags'],$slug);
           Post::insertArticles($_SESSION['user'],$_POST['title'],$_POST['body-editor1'],$slug,$_POST['category'],$image);
+          // $post = new Controller;
+          // $post->create('post',[$_SESSION['user'],$_POST['title'],$_POST['body-editor1'],$slug,$_POST['category'],$image]);
 
           Controller::redirect('/post/index');
         }
@@ -85,6 +93,9 @@ class PostController extends Controller {
 
     public function individual($slug) {
       $article = Post::getArticleWithThisSlug($slug);
+      if ($article == null) {
+          Controller::redirect('/post/index');
+      }
       Post::seeIfArticleIsPublished($slug,$article);
 
       $author_articles = Post::articleAuthor($article[0]['author']);
@@ -163,7 +174,7 @@ class PostController extends Controller {
         $articles = Post::getArticlesWhereTitleLike($search,$limit_from);
         $nr_page = Post::getNrPageWhereTitleLike($search);
 
-        if ($id > $nr_page) {
+        if ($id > $nr_page && $nr_page > 0) {
             Controller::redirect('/post/search/'.$search.'/1');
         }
 
@@ -182,16 +193,11 @@ class PostController extends Controller {
 
 
         foreach ($articles_tag as $article_tag) {
-            $article_ids = Post::getArticlesId($article_tag['article_slug']);
-            $article_ids == null ? '' : $articles_id[] = $article_ids;
-
+            $article_id = Post::getArticlesId($article_tag['article_slug']);
+            $article_id == null ? '' : $articles_id[] = $article_id;
         }
 
         $articles = array();
-        // $article = '';
-        // if (empty($articles_id[1]) && !empty($articles_id[0])) {
-        //     $article = Post::getElement($articles_id[0][0]['id']);
-        // } elseif (!empty($articles_id[0])) {
         if (isset($articles_id)) {
             for ($i = 0; $i < count($articles_id); $i++) {
                 $data = Post::getArticlesWithThisTag($articles_id[$i][0]['id']);
@@ -199,13 +205,10 @@ class PostController extends Controller {
             }
         }
 
-        // }
-
         $categories = Post::getAll('categories');
 
         $this->view('post\tag',[
             'articles' => $articles,
-            // 'article' => $article,
             'categories' => $categories,
             'tag' => $tag
         ]);

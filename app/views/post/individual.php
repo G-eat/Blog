@@ -42,7 +42,7 @@
         <?php foreach ($this->data['comments'] as $comment): ?>
             <div class="card border border-danger">
               <div class="card-header text-info">
-                <?php echo $comment['author'] ?>
+                <a href="/post/user/<?php echo $comment['author'] ?>"><?php echo $comment['author'] ?></a>
               </div>
               <div class="card-body">
                   <h5 class="card-title"><?php echo $comment['comment'] ?></h5>

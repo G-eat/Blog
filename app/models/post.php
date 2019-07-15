@@ -81,6 +81,10 @@ class Post extends Database {
         Database::insert(['articles'],['author','title','body','slug','category','file_name'],
         ["'".$author."'","'".$title."'","'".$body."'",$slug,"'".$category."'","'".$image."'" ]);
     }
+    // public function create($params) {
+    //     Database::insert(['articles'],['author','title','body','slug','category','file_name'],
+    //     ["'".$params[0]."'","'".$params[1]."'","'".$params[2]."'",$params[3],"'".$params[4]."'","'".$params[5]."'" ]);
+    // }
 
     public function getArticleWithThisSlug($slug) {
         return Database::select(['*'],['articles'],[['slug','=',"'".$slug."'"]]);
