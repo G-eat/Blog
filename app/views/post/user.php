@@ -22,6 +22,13 @@
                 <?php } ?>
             <?php endif; ?>
           <div class="card mb-3">
+            <?php if (isset($_SESSION['user']) && $this->data['author'] == $_SESSION['user']) { ?>
+                <form action="/post/deleted" method="post" style="float:right">
+                    <input type="hidden" name="id" value="<?php echo $article['id'] ?>">
+                    <input type="hidden" name="author" value="<?php echo $article['author'] ?>">
+                    <input class="btn btn-danger btn-sm mr-4" type="submit" name="delete" value="Delete">
+                </form>
+            <?php } ?>
             <img class="card-img-top" src="\postPhoto\<?php echo $article['file_name'] ?>" style="width:70%;height:50%;margin:auto" alt="Card image cap">
             <div class="card-body">
               <h5 class="card-title"><?php echo $article['title'] ?></h5>

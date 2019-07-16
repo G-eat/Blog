@@ -1,4 +1,7 @@
 <?php
+if (!isset($_SESSION['admin'])) {
+  Controller::redirect('/post/index');
+}
 /**
  * Admin
  */
@@ -31,6 +34,15 @@ class Admin extends Database {
         Message::setMsg('You create task.','success');
 
         Admin::updateArticlesIsPublished($is_publish,$id);
+        Controller::redirect('/admin/articles');
+    }
+
+    public function deleted() {
+        $id = $_POST['id'];
+
+        Message::setMsg('You delete article.','success');
+
+        Admin::delete(['articles'],[['id','=',"'".$id."'"]]);
         Controller::redirect('/admin/articles');
     }
 

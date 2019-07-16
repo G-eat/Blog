@@ -1,11 +1,9 @@
 <?php
   include '../app/views/include/header.php';
   include '../app/views/include/messages.php';
-
   if (!isset($_SESSION['admin'])) {
     Controller::redirect('post/index');
   }
-
 ?>
 
   <div class="container mt-4">
@@ -15,6 +13,12 @@
         <div class="list-group" id='sortable'>
           <?php foreach ($this->data['articles'] as $article) { ?>
               <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action" id="<?php echo $article['id'] ?>">
+                  <span style="float:left">
+                      <form action="/admin/deleted" method="post">
+                          <input type="hidden" name="id" value="<?php echo $article['id'] ?>">
+                          <input class="btn btn-danger btn-sm mr-4" type="submit" name="delete" value="X">
+                      </form>
+                  </span>
                 <?php echo $article['title'] ?>
                 <span style="float:right">
                 <?php if ($article['is_published'] == 'pending'){ ?>
@@ -28,7 +32,7 @@
                 <?php } else { ?>
                     <p class="text-danger">Reject</p>
                 <?php } ?>
-            </span>
+                </span>
             </a>
             <?php } ?>
         </div>

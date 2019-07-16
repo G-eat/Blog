@@ -184,6 +184,23 @@ class Post extends Database {
 
             Controller::redirect('/post/index');
         }
+    }
+
+    public function deleted() {
+        if (isset($_SESSION['user']) && $_POST['author'] == $_SESSION['user']) {
+            $id = $_POST['id'];
+            $author = $_POST['author'];
+
+            Database::delete(['articles'],[['id','=',"'".$id."'"]]);
+
+            Message::setMsg('You deleted the post.','error');
+
+            Controller::redirect('/post/user/'.$author);
+        } else {
+            Message::setMsg("Your're not authorized.",'error');
+
+            Controller::redirect('/post/index');
+        }
 
     }
 }
