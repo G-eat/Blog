@@ -4,8 +4,12 @@
  * homeController
  */
 class UserController extends Controller {
-    public function __construct() {
+    public function __construct($params = null) {
        User::isSetRemmember_me();
+
+       $this->params = $params;
+       $this->model = 'User';
+       parent::__construct($params);
     }
 
   public function login($msg = '') {
@@ -34,26 +38,11 @@ class UserController extends Controller {
   }
 
   public function register() {
-      // register method post
-      if (isset($_POST['submit'])) {
-        $user = new User;
-        $user->save($_POST['password'],$_POST['confirmpassword'],$_POST['username'],$_POST['email']);
-
-        $this->view('user\register',[
-          'page' => 'Register',
-          'error' => $user->errors,
-          'username' => $_POST['username'],
-          'email' => $_POST['email']
-        ]);
-        $this->view->render();
-        //register get method
-      } else {
-        $this->view('user\register',[
-          'page' => 'Register',
-          'error' => ''
-        ]);
-        $this->view->render();
-      }
+    $this->view('user\register',[
+      'page' => 'Register',
+      'error' => ''
+    ]);
+    $this->view->render();
   }
 
   //confirm email with link

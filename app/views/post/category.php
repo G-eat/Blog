@@ -1,5 +1,6 @@
 <?php
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
 ?>
 
   <div class="container mt-4">

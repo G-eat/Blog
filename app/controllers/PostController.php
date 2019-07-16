@@ -4,83 +4,51 @@
  */
 class PostController extends Controller {
 
-     public function __construct() {
+     public function __construct($params = null) {
         User::isSetRemmember_me();
 
-        // $this->model = 'PostController';
-        // $request = trim( $_SERVER['REQUEST_URI'],'/' );
-        // $url = explode( '/',$request );
-        // $this->params = $url[1];
-        // Controller::create($this->model,$this->params);
+        $this->params = $params;
+        $this->model = 'Post';
+        parent::__construct($params);
      }
 
     public function index($order = '' , $id = 1) {
-      if (isset($_POST['created_at'])) {
-         Controller::redirect('/post/index/created_at');
-      }
+        if (isset($_POST['created_at'])) {
+          Controller::redirect('/post/index/created_at');
+        }
 
-      if ($order === '') {
-        Controller::redirect('/post/index/position');
-      }
+        if ($order === '') {
+          Controller::redirect('/post/index/position');
+        }
 
-      if ($order === 'created_at') {
-         $order = 'created_at';
-         $by = 'DESC';
-      } else {
-         $order = 'position';
-         $by = 'ASC';
-      }
+        if ($order === 'created_at') {
+          $order = 'created_at';
+          $by = 'DESC';
+        } else {
+          $order = 'position';
+          $by = 'ASC';
+        }
 
-      $categories = Post::getAll('categories');
-      $limit_from = Post::limitFrom($id);
-      $articles = Post::getArticles($order,$by,$limit_from,'5');
-      $nr_page = Post::nrPageOfArticle();
-      $error = Post::returnError($articles);
+        $categories = Database::getAll('categories');
+        $limit_from = Post::limitFrom($id);
+        $articles = Post::getArticles($order,$by,$limit_from,'5');
+        $nr_page = Post::nrPageOfArticle();
+        $error = Post::returnError($articles);
 
-      $this->view('post\index',[
+        $this->view('post\index',[
         'categories' => $categories,
         'articles' => $articles,
         'error' => $error,
         'nr_page' => $nr_page,
         'page_current' => $id,
         'order' => $order
-      ]);
-      $this->view->render();
+        ]);
+        $this->view->render();
     }
 
     public function createpost() {
-      if (isset($_POST['submit'])) {
-        $slug = "'".Post::slug($_POST['slug'])."'";
-        $data = Post::seeIfArticleSlugExist($slug);
-
-        if ($data[0] == 1) {
-          $errrors = 'This slug is not available.';
-          $categories = Post::getAll('categories');
-          $tags = Post::getAll('tags');
-
-          $this->view('post\createpost',[
-            'categories' => $categories,
-            'tags' => $tags,
-            'errrors' => $errrors,
-            'title' => $_POST['title'],
-            'category' => $_POST['category'],
-            'slug' => Post::slug($_POST['slug']),
-            'body' => $_POST['body-editor1'],
-            'page' => 'CreatePost'
-          ]);
-          $this->view->render();
-        } else {
-          $image = Post::uploadPhoto($_FILES['image']['name']);
-          Post::insertTag($_POST['tags'],$slug);
-          Post::insertArticles($_SESSION['user'],$_POST['title'],$_POST['body-editor1'],$slug,$_POST['category'],$image);
-          // $post = new Controller;
-          // $post->create('post',[$_SESSION['user'],$_POST['title'],$_POST['body-editor1'],$slug,$_POST['category'],$image]);
-
-          Controller::redirect('/post/index');
-        }
-      } else {
-        $categories = Post::getAll('categories');
-        $tags = Post::getAll('tags');
+        $categories = Database::getAll('categories');
+        $tags = Database::getAll('tags');
 
         $this->view('post\createpost',[
           'categories' => $categories,
@@ -88,28 +56,28 @@ class PostController extends Controller {
           'page' => 'CreatePost'
         ]);
         $this->view->render();
-      }
     }
 
     public function individual($slug) {
-      $article = Post::getArticleWithThisSlug($slug);
-      if ($article == null) {
+        $article = Post::getArticleWithThisSlug($slug);
+        if ($article == null) {
           Controller::redirect('/post/index');
-      }
-      Post::seeIfArticleIsPublished($slug,$article);
+        }
 
-      $author_articles = Post::articleAuthor($article[0]['author']);
-      $tags = Post::tagsWithSameSlug($slug);
-      $comments = Post::commentAccepted($article[0]['id']);
+        Post::seeIfArticleIsPublished($slug,$article);
 
-      $this->view('post\individual',[
+        $author_articles = Post::articleAuthor($article[0]['author']);
+        $tags = Post::tagsWithSameSlug($slug);
+        $comments = Post::commentAccepted($article[0]['id']);
+
+        $this->view('post\individual',[
         'article' => $article,
         'page' => 'Individual',
         'tags' => $tags,
         'comments' => $comments,
         'author_articles' => $author_articles
-      ]);
-      $this->view->render();
+        ]);
+        $this->view->render();
     }
 
     public function user($name , $id = 1) {
@@ -137,10 +105,10 @@ class PostController extends Controller {
     }
 
     public function category($category) {
-      $articles = Post::getArticlesWithThisCategoryPublished($category);
-      $categories = Post::getAll('categories');
+        $articles = Post::getArticlesWithThisCategoryPublished($category);
+        $categories = Database::getAll('categories');
 
-      if (count($articles)) {
+        if (count($articles)) {
           $category_articles = Post::category_articles($articles[0]['category']);
 
           $this->view('post\category',[
@@ -150,14 +118,14 @@ class PostController extends Controller {
             'categories' => $categories
           ]);
           $this->view->render();
-      } else {
+        } else {
           $this->view('post\category',[
               'articles' => $articles,
               'category' => $category,
               'categories' => $categories
           ]);
           $this->view->render();
-      }
+        }
     }
 
     public function search($search='', $id = '') {
@@ -205,7 +173,7 @@ class PostController extends Controller {
             }
         }
 
-        $categories = Post::getAll('categories');
+        $categories = Database::getAll('categories');
 
         $this->view('post\tag',[
             'articles' => $articles,

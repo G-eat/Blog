@@ -26,6 +26,10 @@ class Database implements DBInterface {
         return self::$db;
     }
 
+    public function getAll($table) {
+        return Database::select(['*'],[$table]);
+    }
+
     public function select($fields,$tables,$conditions=null,$groups=null,$orders=null,$limit=null)
     {
       try {

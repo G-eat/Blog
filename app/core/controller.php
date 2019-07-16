@@ -7,18 +7,22 @@ class Controller {
 
     protected $view;
 
-    // protected $model;
-    // protected $params;
+    protected $model;
+    protected $params = [];
 
-    // public function __construct($model,$params) {
-    //     $this->model = $model;
-    //     $this->params = $params;
-    // }
+    public function __construct($params) {
+        $this->params = $params;
+    }
 
-    // public function create($model,$params) {
-    //     $model::$params();
-    //     // echo $model;
-    // }
+    public function create() {
+        $model = new $this->model;
+        $model->create($this->params);
+    }
+
+    public function publish() {
+        $model = new $this->model;
+        $model->publish($this->params);
+    }
 
     public function view($name , $data=[]) {
         $this->view = new View($name,$data);

@@ -1,5 +1,6 @@
 <?php
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
 ?>
 
   <div class="container mt-4">
@@ -26,7 +27,7 @@
         </div>
         <?php if (isset($_SESSION['user'])){ ?>
             <h6 class="mt-5">Leave a commment :</h6>
-            <form action="/comment/add" method="post">
+            <form action="/comment/create" method="post">
                 <div class="input-group">
                     <input type="hidden" name="author" value="<?php echo $_SESSION['user'] ?>">
                     <input type="hidden" name="article_id" value="<?php echo $this->data['article'][0]['id'] ?>">
@@ -64,7 +65,7 @@
           <?php endif; ?>
           <div class="list-group">
               <?php foreach ($this->data['author_articles'] as $author_article) { ?>
-                  <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['article'][0]['title']) && $this->data['article'][0]['title'] == $author_article['title']) ? 'active':'' ?>"><?php echo $author_article['title'] ?></a>
+                  <a href="/post/individual/<?php echo $author_article['slug'] ?>" class="list-group-item list-group-item-action <?php echo (isset($this->data['article'][0]['slug']) && $this->data['article'][0]['slug'] == $author_article['slug']) ? 'active':'' ?>"><?php echo $author_article['title'] ?></a>
               <?php } ?>
           </div>
           <?php if (!$this->data['article'][0]['category'] == null): ?>

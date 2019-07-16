@@ -4,10 +4,6 @@
  */
 class Admin extends Database {
 
-    public function getAll($table) {
-        return Database::select(['*'],[$table]);
-    }
-
     public function getAllArticlesByPosition() {
         return Database::select(['*'],['articles'],null,null,['position']);
     }
@@ -26,6 +22,16 @@ class Admin extends Database {
 
     public function getArticleById($id) {
         return Database::select(['*'],['articles'],[['id','=',"'".$id."'"]]);
+    }
+
+    public function publish() {
+        $is_publish = $_POST['is_publish'];
+        $id = $_POST['id'];
+
+        Message::setMsg('You create task.','success');
+
+        Admin::updateArticlesIsPublished($is_publish,$id);
+        Controller::redirect('/admin/articles');
     }
 
 }

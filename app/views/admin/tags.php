@@ -1,8 +1,12 @@
 <?php
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
+  
   if (!isset($_SESSION['admin'])) {
     Controller::redirect('post/index');
   }
+
+  include '../app/views/include/messages.php';
 ?>
 
   <div class="container mt-4">
@@ -39,7 +43,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="/tag/add" method="post">
+          <form action="/tag/create" method="post">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <button type="submit" name="submit" class="btn btn-primary">Add</button>

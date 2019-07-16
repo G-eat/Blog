@@ -3,23 +3,12 @@
  * Comment
  */
 class CommentController extends Controller {
-    public function __construct() {
+    public function __construct($params = null) {
        User::isSetRemmember_me();
-    }
 
-    public function add(){
-        if (!isset($_SESSION['user'])) {
-            Controller::redirect('/post/index');
-        }
-
-        if (isset($_POST['comment']) && (trim($_POST['comment']) !== '')) {
-            $article_slug = $_POST['article_slug'];
-
-            Comment::insertCommment($_POST['comment'],$_POST['author'],$_POST['article_id']);
-            Controller::redirect('/post/individual/'.$article_slug);
-        } else {
-            Controller::redirect('/post/index');
-        }
+       $this->params = $params;
+       $this->model = 'Comment';
+       parent::__construct($params);
     }
 
     public function delete($id='' , $slug='') {

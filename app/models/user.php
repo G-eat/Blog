@@ -89,7 +89,12 @@ class User extends Database {
   }
 
   // register post
-  public function save($password,$confirmpassword,$username,$email){
+  public function create(){
+    $password = $_POST['password'];
+    $confirmpassword = $_POST['confirmpassword'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+
     User::validateRegister($password,$confirmpassword,$username,$email);
 
     if ($this->errors == null) {
@@ -101,9 +106,13 @@ class User extends Database {
 
       User::sendMail($username,$email,$token);
 
+      Message::setMsg('You need to verify with email.','success');
       Controller::redirect('/user/login');
     } else {
-      return $this->errors;
+        Data::setData($_POST['username'],'username');
+        Data::setData($_POST['email'],'email');
+
+        Controller::redirect('/user/register');
     }
   }
 
@@ -117,18 +126,22 @@ class User extends Database {
 
     if ($data[0] == 1) {
       $this->errors[] ='This username is used.';
+      Message::setMsg('This username is use.','error');
     }
 
     if ($data2[0] == 1) {
       $this->errors[] ='This email is used.';
+      Message::setMsg('This email is use.','error1');
     }
 
     if ($confirmpassword === $password) {
       if (strlen($password) >= 20 || strlen($password) <= 7) {
         $this->errors[] ='Your password must have between 8-16 characters.';
+        Message::setMsg('Your password must have between 8-16 characters.','error2');
       }
     } else {
       $this->errors[] ='Not same Password-Confirm Password.';
+      Message::setMsg('Not same Password-Confirm Password.','error3');
     }
   }
 

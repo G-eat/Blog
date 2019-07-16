@@ -24,6 +24,15 @@ class Category extends Database {
         return Database::update(['categories'],[['name','=',"'".$category."'"]],[['id','=',"'".$category_id."'"]]);
     }
 
+    public function create() {
+        if (isset($_POST['submit'])) {
+          if ($_POST['add_category'] !== '') {
+            Category::insertCategory($_POST['add_category']);
+          }
+          Controller::redirect('/admin/categories');
+        }
+    }
+
 }
 
 ?>

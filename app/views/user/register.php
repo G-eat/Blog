@@ -1,5 +1,6 @@
 <?php
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
   include '../app/views/include/errors.php';
 
     if (!isset($_SESSION['user'])){
@@ -7,15 +8,15 @@
 
  <div class="container mt-4">
    <h3 class="text-primary mb-3">Register</h3>
-   <form action="/user/register" method="POST">
+   <form action="/user/create" method="POST">
      <div class="form-group">
        <label class="text-info" for="exampleInputUsername1">Username :</label>
-       <input type="text" class="form-control" id="noSpaces" aria-describedby="usernameHelp" name="username" value="<?php echo isset($this->data['username']) ? $this->data['username']:'' ?>" placeholder="Username" onkeyup="this.value = this.value.toLowerCase();" autocapitalize="none" required minlength=8>
+       <input type="text" class="form-control" id="noSpaces" aria-describedby="usernameHelp" name="username" value="<?php echo isset($_SESSION['username']) ? Data::display('username') :'' ?>" placeholder="Username" onkeyup="this.value = this.value.toLowerCase();" autocapitalize="none" required minlength=8>
        <!-- <small id="usernameHelp" class="form-text text-muted">Must have 8-50 characters.</small> -->
      </div>
      <div class="form-group">
        <label class="text-info" for="exampleInputEmail1">Email address :</label>
-       <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo isset($this->data['email']) ? $this->data['email']:'' ?>" placeholder="Enter email" name='email' required>
+       <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo isset($_SESSION['email']) ? Data::display('email') :'' ?>" placeholder="Enter email" name='email' required>
        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
      </div>
      <div class="form-group">

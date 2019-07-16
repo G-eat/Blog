@@ -1,6 +1,6 @@
 <?php
-
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
   include '../app/views/include/errors.php';
 
   if (!isset($_SESSION['user'])){ ?>

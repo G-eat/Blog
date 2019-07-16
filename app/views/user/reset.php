@@ -1,6 +1,6 @@
 <?php
-
   include '../app/views/include/header.php';
+  include '../app/views/include/messages.php';
 
   if (!isset($_SESSION['user'])){ ?>
     <?php if (isset($this->data['success'])): ?>

@@ -3,22 +3,13 @@
  * Tag
  */
 class TagController extends Controller {
-  public function __construct() {
-     User::isSetRemmember_me();
-  }
+    public function __construct($params = null) {
+       User::isSetRemmember_me();
 
-  public function add() {
-    if (!isset($_SESSION['admin'])) {
-      Controller::redirect('/post/index');
-    } else {
-      if (isset($_POST['submit'])) {
-        if ($_POST['add_tag'] !== '') {
-          Tag::insertTag($_POST['add_tag']);
-        }
-        Controller::redirect('/admin/tags');
-      }
+       $this->params = $params;
+       $this->model = 'Tag';
+       parent::__construct($params);
     }
-  }
 
   public function delete() {
     if (!isset($_SESSION['admin'])) {

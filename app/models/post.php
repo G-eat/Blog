@@ -7,19 +7,14 @@ class Post extends Database {
     public function slug($text='') {
       // replace non letter or digits by -
       $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-
       // transliterate
       $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-
       // remove unwanted characters
       $text = preg_replace('~[^-\w]+~', '', $text);
-
       // trim
       $text = trim($text, '-');
-
       // remove duplicate -
       $text = preg_replace('~-+~', '-', $text);
-
       // lowercase
       $text = strtolower($text);
 
@@ -28,10 +23,6 @@ class Post extends Database {
       }
 
       return $text;
-    }
-
-    public function getAll($table) {
-        return Database::select(['*'],[$table]);
     }
 
     public function getArticles($order,$by,$limit_from,$to) {
@@ -161,6 +152,40 @@ class Post extends Database {
         return Database::select(['*'],['articles'],[['id'.'=',"'".$articles_id."'"]]);
     }
 
+    public function create() {
+        $slug = "'".Post::slug($_POST['slug'])."'";
+        $data = Post::seeIfArticleSlugExist($slug);
+
+        if ($data[0] == 1) {
+            Message::setMsg('This slug exist,try different slug.','error');
+
+            Data::setData($_POST['title'],'title');
+            Data::setData(Post::slug($_POST['slug']),'slug');
+            Data::setData($_POST['body-editor1'],'body');
+            Data::setData($_POST['category'],'category');
+
+            // echo "
+            //     <script>
+            //              window.history.go(-1);
+            //      </script>
+            //      ";
+
+            // header("location:javascript://history.go(-1)");
+        	// exit();
+            Controller::redirect('/post/createpost');
+        } else {
+            $image = Post::uploadPhoto($_FILES['image']['name']);
+
+            Post::insertTag($_POST['tags'],$slug);
+            Database::insert(['articles'],['author','title','body','slug','category','file_name'],
+            ["'".$_SESSION['user']."'","'".$_POST['title']."'","'".$_POST['body-editor1']."'",$slug,"'".$_POST['category']."'","'".$image."'" ]);
+
+            Message::setMsg('You create the post,now admin need to accept that.','success');
+
+            Controller::redirect('/post/index');
+        }
+
+    }
 }
 
 ?>
