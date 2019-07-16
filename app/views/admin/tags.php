@@ -15,7 +15,7 @@
         <h3 class="text-center">Tags</h3>
         <div class="list-group">
           <?php foreach ($this->data['tags'] as $tag) { ?>
-              <form action="/tag/deleted" method="post">
+              <form action="/tag/delete" method="post">
                 <input type="hidden" name="tag_id" value="<?php echo $tag['id'] ?>">
                 <input type="hidden" name="tag_name" value="<?php echo $tag['name'] ?>">
                 <a class="list-group-item list-group-item-action"><?php echo $tag['name'] ?><span style="float:right"><button type="submit" class="btn btn-outline-danger btn-sm">X</button></span></a>

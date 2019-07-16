@@ -13,7 +13,7 @@
         <h3 class="text-center">Categories</h3>
         <div class="list-group">
           <?php foreach ($this->data['categories'] as $category) { ?>
-              <form action="/category/deleted" method="post">
+              <form action="/category/delete" method="post">
                 <input type="hidden" name="category_id" value="<?php echo $category['id'] ?>">
                 <input type="hidden" name="category_name" value="<?php echo $category['name'] ?>">
                 <a href="/category/update/<?php echo $category['id'] ?>" class="list-group-item list-group-item-action"><?php echo $category['name'] ?><span style="float:right"><button type="submit" class="btn btn-outline-danger btn-sm">X</button></span></a>

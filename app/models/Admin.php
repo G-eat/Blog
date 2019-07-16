@@ -39,10 +39,12 @@ class Admin {
 
     public function delete() {
         $id = $_POST['id'];
+        echo $id;
 
-        Message::setMsg('You delete article.','success');
 
-        Admin::delete(['articles'],[['id','=',"'".$id."'"]]);
+        Database::delete(['articles'],[['id','=',"'".$id."'"]]);
+
+        Message::setMsg('You delete article.','error');
         Controller::redirect('/admin/articles');
     }
 

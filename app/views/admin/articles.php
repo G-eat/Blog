@@ -14,7 +14,7 @@
           <?php foreach ($this->data['articles'] as $article) { ?>
               <a href="/post/individual/<?php echo $article['slug'] ?>" class="list-group-item list-group-item-action" id="<?php echo $article['id'] ?>">
                   <span style="float:left">
-                      <form action="/admin/deleted" method="post">
+                      <form action="/admin/delete" method="post">
                           <input type="hidden" name="id" value="<?php echo $article['id'] ?>">
                           <input class="btn btn-danger btn-sm mr-4" type="submit" name="delete" value="X">
                       </form>
