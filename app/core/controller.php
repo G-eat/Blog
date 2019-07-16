@@ -19,6 +19,16 @@ class Controller {
         $model->create($this->params);
     }
 
+    public function updated() {
+        $model = new $this->model;
+        $model->updated($this->params);
+    }
+
+    public function deleted() {
+        $model = new $this->model;
+        $model->deleted($this->params);
+    }
+
     public function publish() {
         $model = new $this->model;
         $model->publish($this->params);
@@ -35,8 +45,5 @@ class Controller {
       exit;
     }
 
-    // public function createpost() {
-    //     echo $this->model;
-    // }
 
 }

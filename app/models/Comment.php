@@ -13,6 +13,7 @@ class Comment extends Database {
     }
 
     public function deleteById($id) {
+        Message::setMsg("Your're deleted comment.",'error');
         return Database::delete(['comments'],[['id','=',"'".$id."'"]]);
     }
 
@@ -35,6 +36,24 @@ class Comment extends Database {
             Message::setMsg('You create the comment,now admin need to accept that.','success');
 
             Controller::redirect('/post/individual/'.$article_slug);
+        } else {
+            Message::setMsg('Empty Comment.','error');
+            Controller::redirect('/post/index');
+        }
+    }
+
+    public function updated() {
+        if (isset($_POST['submit']) && (trim($_POST['update_comment']) !== '')) {
+
+            if (!isset($_SESSION['user']) || $_POST['author'] !== $_SESSION['user']) {
+                Controller::redirect('/post/index');
+            }
+
+            Comment::updateAcceptedColumnWhereCommentIsUpdated($_POST['update_comment'],$_POST['update_id']);
+
+            Message::setMsg('You update the comment,now admin need to accept that.','success');
+
+            Controller::redirect('/post/individual/'.$_POST['comment_slug']);
         } else {
             Message::setMsg('Empty Comment.','error');
             Controller::redirect('/post/index');

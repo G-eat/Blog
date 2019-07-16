@@ -17,14 +17,6 @@ class CategoryController extends Controller {
        parent::__construct($params);
     }
 
-      public function delete() {
-          if ($_POST['category_id'] !== '') {
-            Category::deleteCategory($_POST['category_id']);
-            Category::updateArticlesCategoryName($_POST['category_name']);
-          }
-          Controller::redirect('/admin/categories');
-      }
-
       public function update($value='') {
           if (isset($value)) {
             $data = Category::getCategoryNameById($value);
@@ -36,14 +28,6 @@ class CategoryController extends Controller {
           } else {
             Controller::redirect('/post/index');
           }
-      }
-
-      public function updated() {
-          $category_id = $_POST['category_id'];
-          $category = $_POST['category'];
-
-          Category::updateCategory($category,$category_id);
-          Controller::redirect('/admin/categories');
       }
 
 }

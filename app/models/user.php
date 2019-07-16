@@ -88,7 +88,7 @@ class User extends Database {
     Controller::redirect('/post/index');
   }
 
-  // register post
+  // register user /create
   public function create(){
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];

@@ -31,6 +31,19 @@ class Tag extends Database {
         }
     }
 
+    public function deleted() {
+      if (!isset($_SESSION['admin'])) {
+        Controller::redirect('/post/index');
+      } else {
+        if ($_POST['tag_name'] !== '') {
+          Message::setMsg("Your're deleted tag.",'error');
+          Tag::updateTagNameInArticlesTagTable($_POST['tag_name']);
+          Tag::deleteTag($_POST['tag_id']);
+        }
+        Controller::redirect('/admin/tags');
+      }
+    }
+
 }
 
 ?>

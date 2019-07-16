@@ -87,7 +87,7 @@
           </div>
           <div class="modal-body">
               <div class="modal-body">
-                  <form action="/comment/update" method="post">
+                  <form action="/comment/updated" method="post">
                       <div class="input-group">
                           <input type="hidden" name="author" value="<?php echo $_SESSION['user'] ?>">
                           <input type="hidden" name="update_id" value="" id='id'>
