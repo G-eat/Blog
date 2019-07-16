@@ -2,7 +2,7 @@
 /**
  * Tag
  */
-class Tag extends Database {
+class Tag {
 
     public function insertTag($tag) {
         return Database::insert(['tags'],['name'],["'#".$tag."'"]);
@@ -31,7 +31,7 @@ class Tag extends Database {
         }
     }
 
-    public function deleted() {
+    public function delete() {
       if (!isset($_SESSION['admin'])) {
         Controller::redirect('/post/index');
       } else {

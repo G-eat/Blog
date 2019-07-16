@@ -2,7 +2,7 @@
 /**
  * Comment
  */
-class Comment extends Database {
+class Comment {
 
     public function insertCommment($comment,$author,$article_id) {
         return Database::insert(['comments'],['comment','author','article_id'],["'".$comment."'","'".$author."'","'".$article_id."'"]);
@@ -42,7 +42,7 @@ class Comment extends Database {
         }
     }
 
-    public function updated() {
+    public function update() {
         if (isset($_POST['submit']) && (trim($_POST['update_comment']) !== '')) {
 
             if (!isset($_SESSION['user']) || $_POST['author'] !== $_SESSION['user']) {

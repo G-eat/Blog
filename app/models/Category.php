@@ -2,7 +2,7 @@
 /**
  * Category
  */
-class Category extends Database {
+class Category {
 
     public function insertCategory($category) {
         return Database::insert(['categories'],['name'],["'".$category."'"]);
@@ -34,7 +34,7 @@ class Category extends Database {
         }
     }
 
-    public function updated() {
+    public function update() {
         $category_id = $_POST['category_id'];
         $category = $_POST['category'];
 
@@ -43,7 +43,7 @@ class Category extends Database {
         Controller::redirect('/admin/categories');
     }
 
-    public function deleted() {
+    public function delete() {
         if ($_POST['category_id'] !== '') {
           Category::deleteCategory($_POST['category_id']);
           Message::setMsg("Your're deleted category.",'error');

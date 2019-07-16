@@ -19,14 +19,14 @@ class Controller {
         $model->create($this->params);
     }
 
-    public function updated() {
+    public function update() {
         $model = new $this->model;
-        $model->updated($this->params);
+        $model->update($this->params);
     }
 
-    public function deleted() {
+    public function delete() {
         $model = new $this->model;
-        $model->deleted($this->params);
+        $model->delete($this->params);
     }
 
     public function publish() {

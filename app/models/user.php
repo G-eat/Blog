@@ -3,7 +3,7 @@
 /**
  *  Post
  */
-class User extends Database {
+class User {
   public $errors=[];
 
   // if is set remmember me log in

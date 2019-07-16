@@ -2,7 +2,7 @@
 /**
  * articles/post
  */
-class Post extends Database {
+class Post {
 
     public function slug($text='') {
       // replace non letter or digits by -
@@ -186,7 +186,7 @@ class Post extends Database {
         }
     }
 
-    public function deleted() {
+    public function delete() {
         if (isset($_SESSION['user']) && $_POST['author'] == $_SESSION['user']) {
             $id = $_POST['id'];
             $author = $_POST['author'];

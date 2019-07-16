@@ -5,7 +5,7 @@ if (!isset($_SESSION['admin'])) {
 /**
  * Admin
  */
-class Admin extends Database {
+class Admin {
 
     public function getAllArticlesByPosition() {
         return Database::select(['*'],['articles'],null,null,['position']);
@@ -37,7 +37,7 @@ class Admin extends Database {
         Controller::redirect('/admin/articles');
     }
 
-    public function deleted() {
+    public function delete() {
         $id = $_POST['id'];
 
         Message::setMsg('You delete article.','success');
