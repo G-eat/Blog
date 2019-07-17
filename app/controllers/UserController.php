@@ -5,7 +5,8 @@
  */
 class UserController extends Controller {
     public function __construct($params = null) {
-       User::isSetRemmember_me();
+       $user = new User();
+       $user->isSetRemmember_me();
 
        $this->params = $params;
        $this->model = 'User';
@@ -47,48 +48,52 @@ class UserController extends Controller {
 
   //confirm email with link
   public function confirmation($username = '',$token='') {
-    if ($token == '' || $username == '') {
-      Controller::redirect('/post/index');
-    } else {
-      User::confirmationToken($username,$token);
-    }
+        $user = new User();
+        if ($token == '' || $username == '') {
+        Controller::redirect('/post/index');
+        } else {
+        $user->confirmationToken($username,$token);
+        }
   }
 
   //reset password form to get email
   public function reset() {
-    //reset method Post
-    if (isset($_POST['email'])) {
-      User::reset();
+        $user = new User();
+        //reset method Post
+        if (isset($_POST['email'])) {
+        $user->reset();
 
-      $this->view('user\reset',[
+        $this->view('user\reset',[
         'success' => 'Your get the info from email.'
-      ]);
-      $this->view->render();
-      //reset method get
-    } else {
-      $this->view('user\reset',[]);
-      $this->view->render();
-    }
+        ]);
+        $this->view->render();
+        //reset method get
+        } else {
+        $this->view('user\reset',[]);
+        $this->view->render();
+        }
   }
 
   //reset password
   public function resetpassword($token='',$username='',$error = '') {
-    $tokenExist = User::tokenExist($token);
-    $userExist = User::userExist($username);
+        $user = new User();
+        $database = new Database();
+        $tokenExist = $user->tokenExist($token);
+        $userExist = $user->userExist($username);
 
-    //after posting to rememmber $token and $username
-    if(!$tokenExist['reset_token'] || !$userExist['username']) {
-      //if isset $_POST
-      if (isset($_POST['submit'])) {
-          $validate = User::validate($_POST['confirmpassword'],$_POST['password']);
+        //after posting to rememmber $token and $username
+        if(!$tokenExist['reset_token'] || !$userExist['username']) {
+        //if isset $_POST
+        if (isset($_POST['submit'])) {
+          $validate = $user->validate($_POST['confirmpassword'],$_POST['password']);
           $username = $_POST['hidden'];
           $token = $_POST['hiddenToken'];
           //if not valid return to same link to try again
           if ($validate == '') {
             Controller::redirect('/user/resetpassword/'.$token.'/'.$username.'/error');
           }
-          Database::delete(['reset_password'],[['reset_token','=',"'".$token."'"]]);
-          Database::update(['users'],[['password','=',"'".$validate."'"]],[['username','=',"'".$username."'"]]);
+          $database->delete(['reset_password'],[['reset_token','=',"'".$token."'"]]);
+          $database->update(['users'],[['password','=',"'".$validate."'"]],[['username','=',"'".$username."'"]]);
           Controller::redirect('/user/login/ok');
         } else {
           Controller::redirect('/user/login/error');
@@ -125,7 +130,8 @@ class UserController extends Controller {
       // delete  cookie
       $cookie = $_COOKIE['remmember_me'];
       setcookie('remmember_me','',time() - 3600,'/');
-      User::deleteCookie($cookie);
+      $user = new User();
+      $user->deleteCookie($cookie);
       }
 
     // Finally, destroy the session.

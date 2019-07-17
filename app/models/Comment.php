@@ -22,6 +22,7 @@ class Comment {
     }
 
     public function create() {
+        $comment = new Comment();
         if (!isset($_SESSION['user'])) {
             Message::setMsg("You're not logIn.",'error');
             Controller::redirect('/post/index');
@@ -31,7 +32,7 @@ class Comment {
             $article_slug = $_POST['article_slug'];
 
 
-            Comment::insertCommment($_POST['comment'],$_POST['author'],$_POST['article_id']);
+            $comment->insertCommment($_POST['comment'],$_POST['author'],$_POST['article_id']);
 
             Message::setMsg('You create the comment,now admin need to accept that.','success');
 
@@ -43,13 +44,14 @@ class Comment {
     }
 
     public function update() {
+        $comment = new Comment();
         if (isset($_POST['submit']) && (trim($_POST['update_comment']) !== '')) {
 
             if (!isset($_SESSION['user']) || $_POST['author'] !== $_SESSION['user']) {
                 Controller::redirect('/post/index');
             }
 
-            Comment::updateAcceptedColumnWhereCommentIsUpdated($_POST['update_comment'],$_POST['update_id']);
+            $comment->updateAcceptedColumnWhereCommentIsUpdated($_POST['update_comment'],$_POST['update_id']);
 
             Message::setMsg('You update the comment,now admin need to accept that.','success');
 

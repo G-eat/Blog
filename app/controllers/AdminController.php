@@ -10,7 +10,8 @@ if (!isset($_SESSION['admin'])) {
 class AdminController extends Controller {
 
       public function __construct($params = null) {
-         User::isSetRemmember_me();
+         $user = new User();
+         $user->isSetRemmember_me();
 
          $this->params = $params;
          $this->model = 'Admin';
@@ -23,7 +24,8 @@ class AdminController extends Controller {
       }
 
       public function categories() {
-        $data = Database::getAll('categories');
+        $database = new Database();
+        $data = $database->getAll('categories');
 
         $this->view('admin\categories',[
           'categories' => $data
@@ -32,7 +34,8 @@ class AdminController extends Controller {
       }
 
       public function users() {
-        $data = Database::getAll('users');
+        $database = new Database();
+        $data = $database->getAll('users');
 
         $this->view('admin\users',[
           'users' => $data
@@ -41,7 +44,8 @@ class AdminController extends Controller {
       }
 
       public function articles() {
-        $data = Admin::getAllArticlesByPosition();
+        $admin = new Admin();
+        $data = $admin->getAllArticlesByPosition();
 
         $this->view('admin\articles',[
           'articles' => $data
@@ -50,12 +54,13 @@ class AdminController extends Controller {
       }
 
       public function position() {
+          $admin = new Admin();
           $positions = $_POST['positions'];
 
           $num = 1;
 
           foreach ($positions as $position) {
-            Admin::updateArticlesPosition($num,$position);
+            $admin->updateArticlesPosition($num,$position);
             $num ++;
           }
       }
@@ -70,7 +75,8 @@ class AdminController extends Controller {
       // }
 
       public function comments() {
-        $comments = Database::getAll('comments');
+        $database = new Database();
+        $comments = $database->getAll('comments');
 
         $this->view('admin\comments',[
           'comments' => $comments
@@ -80,23 +86,25 @@ class AdminController extends Controller {
 
       //accept comment from admin and publish them
       public function accept() {
+          $admin = new Admin();
           $is_accepted = $_POST['is_accepted'];
           $id = $_POST['id'];
 
           Message::setMsg('You create task.','success');
 
-          Admin::updateCommentIsAccepted($is_accepted,$id);
+          $admin->updateCommentIsAccepted($is_accepted,$id);
           Controller::redirect('/admin/comments');
       }
 
       public function post($id) {
-          $data = Admin::getArticleById($id);
+          $data = $admin->getArticleById($id);
 
           Controller::redirect('/post/individual/'.$data[0]['slug']);
       }
 
       public function tags() {
-          $tags = Database::getAll('tags');
+          $database = new Database;
+          $tags = $database->getAll('tags');
 
           $this->view('admin\tags',[
             'tags' => $tags

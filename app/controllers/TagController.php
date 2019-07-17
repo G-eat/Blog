@@ -4,7 +4,8 @@
  */
 class TagController extends Controller {
     public function __construct($params = null) {
-       User::isSetRemmember_me();
+       $user = new User();
+       $user->isSetRemmember_me();
 
        $this->params = $params;
        $this->model = 'Tag';

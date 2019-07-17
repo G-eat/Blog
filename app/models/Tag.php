@@ -17,6 +17,7 @@ class Tag {
     }
 
     public function create() {
+        $tag = new Tag();
         if (!isset($_SESSION['admin'])) {
           Message::setMsg("Your're not unauthorized.",'error');
           Controller::redirect('/post/index');
@@ -24,7 +25,7 @@ class Tag {
           if (isset($_POST['submit'])) {
             if ($_POST['add_tag'] !== '') {
               Message::setMsg("You create new tag.",'success');
-              Tag::insertTag($_POST['add_tag']);
+              $tag->insertTag($_POST['add_tag']);
             }
             Controller::redirect('/admin/tags');
           }
@@ -32,16 +33,17 @@ class Tag {
     }
 
     public function delete() {
-      if (!isset($_SESSION['admin'])) {
+        $tag = new Tag();
+        if (!isset($_SESSION['admin'])) {
         Controller::redirect('/post/index');
-      } else {
+        } else {
         if ($_POST['tag_name'] !== '') {
           Message::setMsg("Your're deleted tag.",'error');
-          Tag::updateTagNameInArticlesTagTable($_POST['tag_name']);
-          Tag::deleteTag($_POST['tag_id']);
+          $tag->updateTagNameInArticlesTagTable($_POST['tag_name']);
+          $tag->deleteTag($_POST['tag_id']);
         }
         Controller::redirect('/admin/tags');
-      }
+        }
     }
 
 }

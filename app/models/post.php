@@ -153,14 +153,15 @@ class Post {
     }
 
     public function create() {
-        $slug = "'".Post::slug($_POST['slug'])."'";
-        $data = Post::seeIfArticleSlugExist($slug);
+        $post = new Post();
+        $slug = "'".$post->slug($_POST['slug'])."'";
+        $data = $post->seeIfArticleSlugExist($slug);
 
         if ($data[0] == 1) {
             Message::setMsg('This slug exist,try different slug.','error');
 
             Data::setData($_POST['title'],'title');
-            Data::setData(Post::slug($_POST['slug']),'slug');
+            Data::setData($post->slug($_POST['slug']),'slug');
             Data::setData($_POST['body-editor1'],'body');
             Data::setData($_POST['category'],'category');
 
@@ -174,9 +175,9 @@ class Post {
         	// exit();
             Controller::redirect('/post/createpost');
         } else {
-            $image = Post::uploadPhoto($_FILES['image']['name']);
+            $image = $post->uploadPhoto($_FILES['image']['name']);
 
-            Post::insertTag($_POST['tags'],$slug);
+            $post->insertTag($_POST['tags'],$slug);
             Database::insert(['articles'],['author','title','body','slug','category','file_name'],
             ["'".$_SESSION['user']."'","'".$_POST['title']."'","'".$_POST['body-editor1']."'",$slug,"'".$_POST['category']."'","'".$image."'" ]);
 

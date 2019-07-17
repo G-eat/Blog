@@ -8,41 +8,46 @@ if (!isset($_SESSION['admin'])) {
 class Admin {
 
     public function getAllArticlesByPosition() {
-        return Database::select(['*'],['articles'],null,null,['position']);
+        $database = new Database();
+        return $database->select(['*'],['articles'],null,null,['position']);
     }
 
     public function updateArticlesPosition($num,$position) {
-        return Database::update(['articles'],[['position','=',"'".$num."'"]],[['id','=',"'".$position."'"]]);
+        $database = new Database();
+        return $database->update(['articles'],[['position','=',"'".$num."'"]],[['id','=',"'".$position."'"]]);
     }
 
     public function updateArticlesIsPublished($is_publish,$id) {
-        return Database::update(['articles'],[['is_published','=',"'".$is_publish."'"]],[['id','=',"'".$id."'"]]);
+        $database = new Database();
+        return $database->update(['articles'],[['is_published','=',"'".$is_publish."'"]],[['id','=',"'".$id."'"]]);
     }
 
     public function updateCommentIsAccepted($is_accepted,$id) {
-        return Database::update(['comments'],[['accepted','=',"'".$is_accepted."'"]],[['id','=',"'".$id."'"]]);
+        $database = new Database();
+        return $database->update(['comments'],[['accepted','=',"'".$is_accepted."'"]],[['id','=',"'".$id."'"]]);
     }
 
     public function getArticleById($id) {
-        return Database::select(['*'],['articles'],[['id','=',"'".$id."'"]]);
+        $database = new Database();
+        return $database->select(['*'],['articles'],[['id','=',"'".$id."'"]]);
     }
 
     public function publish() {
+        $admin = new Admin();
         $is_publish = $_POST['is_publish'];
         $id = $_POST['id'];
 
         Message::setMsg('You create task.','success');
 
-        Admin::updateArticlesIsPublished($is_publish,$id);
+        $admin->updateArticlesIsPublished($is_publish,$id);
         Controller::redirect('/admin/articles');
     }
 
     public function delete() {
+        $database = new Database();
         $id = $_POST['id'];
-        echo $id;
 
-
-        Database::delete(['articles'],[['id','=',"'".$id."'"]]);
+        $database->delete(['articles'],[['id','=',"'".$id."'"]]);
 
         Message::setMsg('You delete article.','error');
         Controller::redirect('/admin/articles');

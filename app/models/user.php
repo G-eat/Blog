@@ -8,12 +8,13 @@ class User {
 
   // if is set remmember me log in
   public function isSetRemmember_me() {
+    $user = new User();
     $cookie = $_COOKIE['remmember_me'] ?? false;
 
     if ($cookie) {
       $data = Database::select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
       $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
-      $isExpireToken = User::isExpireToken($data[0]['expire_at']);
+      $isExpireToken = $user->isExpireToken($data[0]['expire_at']);
 
       if ($data_admin[0]['username'] !== ''  && !$isExpireToken) {
         $_SESSION['admin'] = $data_admin[0]['username'];
@@ -33,7 +34,8 @@ class User {
 
   // login user
   public function logIn($password,$username,$remmeberme) {
-    User::validatelogin($password,$username);
+    $user = new User();
+    $user->validatelogin($password,$username);
 
     $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
 
@@ -48,7 +50,7 @@ class User {
       }
 
       if ($remmeberme == 1) {
-        USER::remmmemberLogin($_POST['username']);
+        $user->remmmemberLogin($_POST['username']);
       }
 
       Controller::redirect('/post/index');
@@ -90,21 +92,22 @@ class User {
 
   // register user /create
   public function create(){
+    $user = new User();
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];
     $username = $_POST['username'];
     $email = $_POST['email'];
 
-    User::validateRegister($password,$confirmpassword,$username,$email);
+    $user->validateRegister($password,$confirmpassword,$username,$email);
 
     if ($this->errors == null) {
       $md5password = md5($password);
 
-      $token = User::generateRandomString();
+      $token = $user->generateRandomString();
 
       $data = Database::insert(['users'],['username','email','password','token'],["'".$username."'","'".$email."'","'".$md5password."'","'".$token."'"]);
 
-      User::sendMail($username,$email,$token);
+      $user->sendMail($username,$email,$token);
 
       Message::setMsg('You need to verify with email.','success');
       Controller::redirect('/user/login');
@@ -204,12 +207,13 @@ class User {
 
     //reset password form to get email
     public function reset() {
-      $token = User::generateRandomString();
+      $user = new User();
+      $token = $user->generateRandomString();
 
       $data = Database::select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
 
       if ($data[0]['username']) {
-        User::sendResetMail($data[0]['username'],$data[0]['email'],$token);
+        $user->sendResetMail($data[0]['username'],$data[0]['email'],$token);
         Database::insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
       }
     }

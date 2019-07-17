@@ -4,7 +4,8 @@
  */
 class CommentController extends Controller {
     public function __construct($params = null) {
-       User::isSetRemmember_me();
+       $user = new User();
+       $user->isSetRemmember_me();
 
        $this->params = $params;
        $this->model = 'Comment';
@@ -12,14 +13,15 @@ class CommentController extends Controller {
     }
 
     public function delete($id='' , $slug='') {
+        $comment = new Comment();
         if ($id === '' || $slug === '') {
             Controller::redirect('/post/index');
         }
 
-        $data = Comment::getAuthorOfPostById($id);
+        $data = $comment->getAuthorOfPostById($id);
 
         if ((isset($_SESSION['user']) && $_SESSION['user'] === $data[0]['author']) || isset($_SESSION['admin'])) {
-            Comment::deleteById($id);
+            $comment->deleteById($id);
             Controller::redirect('/post/individual/'.$slug);
         } else {
             Controller::redirect('/post/index');
