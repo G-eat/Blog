@@ -16,7 +16,7 @@ class View {
   }
 
   public function render() {
-    file_exists(VIEW.$this->file.'.php') ? include VIEW.$this->file.'.php':include VIEW.'error.php';
+    file_exists(dirname( __DIR__ ).'\views\\'.$this->file.'.php') ? include dirname( __DIR__ ).'\views\\'.$this->file.'.php':include dirname( __DIR__ ).'\views\\'.'error.php';
   }
 
 }
