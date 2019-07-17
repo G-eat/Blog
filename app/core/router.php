@@ -13,7 +13,7 @@ class Router {
 
     if (file_exists(CONTROLLER. $this->controller.'.php')) {
        $this->controller = new $this->controller($this->params);
-
+       
        if (empty($this->controller)) {
          header("Location: /post/index",true,303);
          exit;
@@ -25,7 +25,6 @@ class Router {
          header("Location: /post/index",true,303);
          exit;
        }
-
      } else {
        header("Location: /post/index",true,303);
        exit;

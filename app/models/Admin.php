@@ -33,25 +33,28 @@ class Admin {
     }
 
     public function publish() {
-        $admin = new Admin();
         $message = new Message();
+
         $is_publish = $_POST['is_publish'];
         $id = $_POST['id'];
 
         $message->setMsg('You create task.','success');
 
-        $admin->updateArticlesIsPublished($is_publish,$id);
+        $this->updateArticlesIsPublished($is_publish,$id);
+
         Controller::redirect('/admin/articles');
     }
 
     public function delete() {
         $database = new Database();
         $message = new Message();
+
         $id = $_POST['id'];
 
         $database->delete(['articles'],[['id','=',"'".$id."'"]]);
 
         $message->setMsg('You delete article.','error');
+        
         Controller::redirect('/admin/articles');
     }
 

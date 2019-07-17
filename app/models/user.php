@@ -8,15 +8,14 @@ class User {
 
   // if is set remmember me log in
   public function isSetRemmember_me() {
-    $user = new User();
     $database = new Database();
-    $userController = new UserController();
+
     $cookie = $_COOKIE['remmember_me'] ?? false;
 
     if ($cookie) {
       $data = $database->select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
       $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
-      $isExpireToken = $user->isExpireToken($data[0]['expire_at']);
+      $isExpireToken = $this->isExpireToken($data[0]['expire_at']);
 
       if ($data_admin[0]['username'] !== ''  && !$isExpireToken) {
         $_SESSION['admin'] = $data_admin[0]['username'];
@@ -25,7 +24,7 @@ class User {
       if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
          $_SESSION['user'] = $data[0]['user_name'];
       } else {
-         $userController->logout();
+         UserController::logout();
       }
     }
   }
@@ -36,9 +35,9 @@ class User {
 
   // login user
   public function logIn($password,$username,$remmeberme) {
-    $user = new User();
     $database = new Database();
-    $user->validatelogin($password,$username);
+
+    $this->validatelogin($password,$username);
 
     $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
 
@@ -53,7 +52,7 @@ class User {
       }
 
       if ($remmeberme == 1) {
-        $user->remmmemberLogin($_POST['username']);
+        $this->remmmemberLogin($_POST['username']);
       }
 
       Controller::redirect('/post/index');
@@ -65,7 +64,9 @@ class User {
   // validate login
   public function validateLogin($password,$username) {
     $database = new Database();
+
     $password1 = md5($password);
+
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = "'.$username.'" AND `password` ="'. $password1.'" AND `token` =1';
     $data = $database->raw($mysql);
 
@@ -78,6 +79,7 @@ class User {
   public function remmmemberLogin($username) {
     $token = new Token();
     $database = new Database();
+
     $hash_token = $token->getHash();
 
     $expiry_token = time() + 60 * 60 * 24 * 7;
@@ -97,25 +99,25 @@ class User {
 
   // register user /create
   public function create(){
-    $user = new User();
     $database = new Database();
     $message = new Message();
     $data = new Data();
+
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];
     $username = $_POST['username'];
     $email = $_POST['email'];
 
-    $user->validateRegister($password,$confirmpassword,$username,$email);
+    $this->validateRegister($password,$confirmpassword,$username,$email);
 
     if ($this->errors == null) {
       $md5password = md5($password);
 
-      $token = $user->generateRandomString();
+      $token = $this->generateRandomString();
 
       $data = $database->insert(['users'],['username','email','password','token'],["'".$username."'","'".$email."'","'".$md5password."'","'".$token."'"]);
 
-      $user->sendMail($username,$email,$token);
+      $this->sendMail($username,$email,$token);
 
       $message->setMsg('You need to verify with email.','success');
       Controller::redirect('/user/login');
@@ -131,6 +133,7 @@ class User {
   public function validateRegister($password,$confirmpassword,$username,$email) {
     $database = new Database();
     $message = new Message();
+
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = '."'".$username."'";
     $mysql2 = 'SELECT COUNT(*) FROM `users` WHERE `email` = '."'".$email."'";
 
@@ -195,14 +198,15 @@ class User {
   //confirm email with link
   public function confirmationToken($username,$token) {
     $database = new Database();
+
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `token` ='."'".$token."'".' AND `username` = '."'".$username."'";
-    // $data = USER::confirmToken($mysql,$token,$username);
     $data = $database->raw($mysql);
 
     if ($data[0] == 1) {
       $database->update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
 
       session_regenerate_id(true);
+
       $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
       //if is admin set session admin to his name
       if ($data_admin[0]['username'] !== '') {
@@ -218,14 +222,14 @@ class User {
 
     //reset password form to get email
     public function reset() {
-      $user = new User();
       $database = new Database();
-      $token = $user->generateRandomString();
+
+      $token = $this->generateRandomString();
 
       $data = $database->select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
 
       if ($data[0]['username']) {
-        $user->sendResetMail($data[0]['username'],$data[0]['email'],$token);
+        $this->sendResetMail($data[0]['username'],$data[0]['email'],$token);
         $database->insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
       }
     }
@@ -266,14 +270,18 @@ class User {
     //reset password see if token exists
     public function tokenExist($token) {
       $database = new Database();
+
       $data = $database->select(['*'],['reset_password'],[['reset_token','LIKE',"'".$token."'"]]);
+
       return $data[0];
     }
 
     //reset password see if user exists
     public function userExist($username) {
       $database = new Database();
+
       $data = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
+      
       return $data[0];
     }
 

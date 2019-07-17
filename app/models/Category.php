@@ -30,35 +30,36 @@ class Category {
     }
 
     public function create() {
-        $category = new Category();
         $message = new Message();
+
         if (isset($_POST['submit'])) {
           if ($_POST['add_category'] !== '') {
             $message->setMsg("Your're created category.",'success');
-            $category->insertCategory($_POST['add_category']);
+            $this->insertCategory($_POST['add_category']);
           }
           Controller::redirect('/admin/categories');
         }
     }
 
     public function update() {
-        $category = new Category();
         $message = new Message();
+
         $category_id = $_POST['category_id'];
         $category = $_POST['category'];
 
-        $category->updateCategory($category,$category_id);
+        $this->updateCategory($category,$category_id);
+
         $message->setMsg("Your're updated category.",'success');
         Controller::redirect('/admin/categories');
     }
 
     public function delete() {
-        $category = new Category();
         $message = new Message();
+        
         if ($_POST['category_id'] !== '') {
-          $category->deleteCategory($_POST['category_id']);
+          $this->deleteCategory($_POST['category_id']);
           $message->setMsg("Your're deleted category.",'error');
-          $category->updateArticlesCategoryName($_POST['category_name']);
+          $this->updateArticlesCategoryName($_POST['category_name']);
         }
         Controller::redirect('/admin/categories');
     }

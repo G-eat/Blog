@@ -32,7 +32,9 @@ class Post {
 
     public function nrPageOfArticle() {
         $database = new Database();
+
         $all_articles = $database->select(['*'],['articles'],[['is_published','=','"Publish"']]);
+
         return ceil(count($all_articles)/5);
     }
 
@@ -54,19 +56,24 @@ class Post {
 
     public function seeIfArticleSlugExist($slug) {
         $database = new Database();
+
         $mysql = 'SELECT COUNT(*) FROM `articles` WHERE `slug` = '.$slug;
+
         return $database->raw($mysql);
     }
 
     public function uploadPhoto($image) {
         $image = uniqid('', true) . '-' .$_FILES['image']['name'];
+
         $file_destination = '.\postPhoto\\'.$image;
         move_uploaded_file($_FILES['image']['tmp_name'],$file_destination);
+
         return $image;
     }
 
     public function insertTag($tags,$slug) {
         $database = new Database();
+
         foreach ($tags as $tag) {
            $database->insert(['articles_tag'],['tag_name','article_slug'],["'".$tag."'",$slug]);
         }
@@ -74,13 +81,10 @@ class Post {
 
     public function insertArticles($author,$title,$body,$slug,$category,$image) {
         $database = new Database();
+
         $database->insert(['articles'],['author','title','body','slug','category','file_name'],
         ["'".$author."'","'".$title."'","'".$body."'",$slug,"'".$category."'","'".$image."'" ]);
     }
-    // public function create($params) {
-    //     Database::insert(['articles'],['author','title','body','slug','category','file_name'],
-    //     ["'".$params[0]."'","'".$params[1]."'","'".$params[2]."'",$params[3],"'".$params[4]."'","'".$params[5]."'" ]);
-    // }
 
     public function getArticleWithThisSlug($slug) {
         $database = new Database();
@@ -89,6 +93,7 @@ class Post {
 
     public function seeIfArticleIsPublished($slug,$article) {
         $database = new Database();
+
         $article_ispublish = $database->select(['*'],['articles'],[['slug','=',"'".$slug."'"],['AND'],['is_published','=','"Publish"']]);
 
         if (count($article_ispublish) == 0 && $article[0]['author'] !== $_SESSION['user']) {
@@ -118,7 +123,9 @@ class Post {
 
     public function nrPageOfArticleWithThisAuthor($name) {
         $database = new Database();
+
         $all_articles = $database->select(['*'],['articles'],[['author','=',"'".$name."'"]]);
+
         return ceil(count($all_articles)/5);
     }
 
@@ -129,7 +136,9 @@ class Post {
 
     public function nrPageOfArticleWithThisAuthorPublished($name) {
         $database = new Database();
+
         $all_articles = $database->select(['*'],['articles'],[['author','=',"'".$name."'"],['AND'],['is_published','=','"Publish"']]);
+
         return ceil(count($all_articles)/5);
     }
 
@@ -150,7 +159,9 @@ class Post {
 
     public function getNrPageWhereTitleLike($search) {
         $database = new Database();
+
         $all_articles = $database->select(['*'],['articles'],[['title','LIKE','"%'.$search.'%"'],['AND'],['is_published','=','"Publish"']]);
+
         return ceil(count($all_articles)/5);
     }
 
@@ -175,31 +186,29 @@ class Post {
     }
 
     public function create() {
-        $post = new Post();
         $database = new Database();
         $message = new Message();
         $data = new Data();
-        $slug = "'".$post->slug($_POST['slug'])."'";
-        $data = $post->seeIfArticleSlugExist($slug);
+
+        $slug = "'".$this->slug($_POST['slug'])."'";
+        $data = $this->seeIfArticleSlugExist($slug);
 
         if ($data[0] == 1) {
-            $message->setMsg('This slug exist,try different slug.','error');
-
             $data->setData($_POST['title'],'title');
-            $data->setData($post->slug($_POST['slug']),'slug');
+            $data->setData($this->slug($_POST['slug']),'slug');
             $data->setData($_POST['body-editor1'],'body');
             $data->setData($_POST['category'],'category');
 
+            $message->setMsg('This slug exist,try different slug.','error');
             Controller::redirect('/post/createpost');
         } else {
-            $image = $post->uploadPhoto($_FILES['image']['name']);
+            $image = $this->uploadPhoto($_FILES['image']['name']);
 
-            $post->insertTag($_POST['tags'],$slug);
+            $this->insertTag($_POST['tags'],$slug);
             $database->insert(['articles'],['author','title','body','slug','category','file_name'],
             ["'".$_SESSION['user']."'","'".$_POST['title']."'","'".$_POST['body-editor1']."'",$slug,"'".$_POST['category']."'","'".$image."'" ]);
 
             $message->setMsg('You create the post,now admin need to accept that.','success');
-
             Controller::redirect('/post/index');
         }
     }
@@ -207,6 +216,7 @@ class Post {
     public function delete() {
         $database = new Database();
         $message = new Message();
+
         if (isset($_SESSION['user']) && $_POST['author'] == $_SESSION['user']) {
             $id = $_POST['id'];
             $author = $_POST['author'];
@@ -214,11 +224,9 @@ class Post {
             $database->delete(['articles'],[['id','=',"'".$id."'"]]);
 
             $message->setMsg('You deleted the post.','error');
-
             Controller::redirect('/post/user/'.$author);
         } else {
             $message->setMsg("Your're not authorized.",'error');
-
             Controller::redirect('/post/index');
         }
 

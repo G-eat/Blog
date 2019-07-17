@@ -6,6 +6,7 @@ class PostController extends Controller {
 
      public function __construct($params = null) {
         $user = new User();
+
         $user->isSetRemmember_me();
 
         $this->params = $params;
@@ -15,6 +16,7 @@ class PostController extends Controller {
 
     public function index($order = '' , $id = 1) {
         $database = new Database();
+        $post = new Post();
 
         if (isset($_POST['created_at'])) {
           $this->redirect('/post/index/created_at');
@@ -32,62 +34,64 @@ class PostController extends Controller {
           $by = 'ASC';
         }
 
-        $categories = $database->getAll('categories');
-        $post = new Post();
+        $categories = $database->select(['*'],['categories']);
         $limit_from = $post->limitFrom($id);
         $articles = $post->getArticles($order,$by,$limit_from,'5');
         $nr_page = $post->nrPageOfArticle();
         $error = $post->returnError($articles);
 
         $this->view('post\index',[
-        'categories' => $categories,
-        'articles' => $articles,
-        'error' => $error,
-        'nr_page' => $nr_page,
-        'page_current' => $id,
-        'order' => $order
+            'categories' => $categories,
+            'articles' => $articles,
+            'error' => $error,
+            'nr_page' => $nr_page,
+            'page_current' => $id,
+            'order' => $order
         ]);
         $this->view->render();
     }
 
     public function createpost() {
         $database = new Database();
-        $categories = $database->getAll('categories');
-        $tags = $database->getAll('tags');
+
+        $categories = $database->select(['*'],['categories']);
+        $tags = $database->select(['*'],['tags']);
 
         $this->view('post\createpost',[
-          'categories' => $categories,
-          'tags' => $tags,
-          'page' => 'CreatePost'
+            'categories' => $categories,
+            'tags' => $tags,
+            'page' => 'CreatePost'
         ]);
         $this->view->render();
     }
 
     public function individual($slug) {
         $post = new Post();
+
         $article = $post->getArticleWithThisSlug($slug);
+
         if ($article == null) {
           Controller::redirect('/post/index');
         }
 
         $post->seeIfArticleIsPublished($slug,$article);
-
         $author_articles = $post->articleAuthor($article[0]['author']);
         $tags = $post->tagsWithSameSlug($slug);
         $comments = $post->commentAccepted($article[0]['id']);
 
         $this->view('post\individual',[
-        'article' => $article,
-        'page' => 'Individual',
-        'tags' => $tags,
-        'comments' => $comments,
-        'author_articles' => $author_articles
+            'article' => $article,
+            'page' => 'Individual',
+            'tags' => $tags,
+            'comments' => $comments,
+            'author_articles' => $author_articles
         ]);
         $this->view->render();
     }
 
     public function user($name , $id = 1) {
         $post = new Post();
+
         $limit_from = $post->limitFrom($id);
 
         if (isset($_SESSION['user']) && $name == $_SESSION['user']) {
@@ -103,10 +107,10 @@ class PostController extends Controller {
         }
 
         $this->view('post\user',[
-          'articles' => $articles,
-          'author' => $name,
-          'nr_page' => $nr_page,
-          'page_current' => $id
+            'articles' => $articles,
+            'author' => $name,
+            'nr_page' => $nr_page,
+            'page_current' => $id
         ]);
         $this->view->render();
     }
@@ -114,17 +118,18 @@ class PostController extends Controller {
     public function category($category) {
         $post = new Post();
         $database = new Database();
+
         $articles = $post->getArticlesWithThisCategoryPublished($category);
-        $categories = $database->getAll('categories');
+        $categories = $database->select(['*'],['categories']);
 
         if (count($articles)) {
           $category_articles = $post->category_articles($articles[0]['category']);
 
           $this->view('post\category',[
-            'articles' => $articles,
-            'category_articles' => $category_articles,
-            'category' => $category,
-            'categories' => $categories
+              'articles' => $articles,
+              'category_articles' => $category_articles,
+              'category' => $category,
+              'categories' => $categories
           ]);
           $this->view->render();
         } else {
@@ -139,6 +144,7 @@ class PostController extends Controller {
 
     public function search($search='', $id = '') {
         $post = new Post();
+
         if ($search !== '' && !isset($_POST['search'])) {
             $search = $search;
         } elseif (!isset($_POST['search']) || $_POST['search'] == '') {
@@ -168,9 +174,9 @@ class PostController extends Controller {
     public function tag($value='') {
         $post = new Post();
         $database = new Database();
+
         $tag = '#'.$value;
         $articles_tag = $post->getArticlesTag($tag);
-
 
         foreach ($articles_tag as $article_tag) {
             $article_id = $post->getArticlesId($article_tag['article_slug']);
@@ -185,7 +191,7 @@ class PostController extends Controller {
             }
         }
 
-        $categories = $database->getAll('categories');
+        $categories = $database->select(['*'],['categories']);
 
         $this->view('post\tag',[
             'articles' => $articles,

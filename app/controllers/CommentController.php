@@ -5,6 +5,7 @@
 class CommentController extends Controller {
     public function __construct($params = null) {
        $user = new User();
+
        $user->isSetRemmember_me();
 
        $this->params = $params;
@@ -14,6 +15,7 @@ class CommentController extends Controller {
 
     public function delete($id='' , $slug='') {
         $comment = new Comment();
+
         if ($id === '' || $slug === '') {
             Controller::redirect('/post/index');
         }
@@ -22,6 +24,7 @@ class CommentController extends Controller {
 
         if ((isset($_SESSION['user']) && $_SESSION['user'] === $data[0]['author']) || isset($_SESSION['admin'])) {
             $comment->deleteById($id);
+            
             Controller::redirect('/post/individual/'.$slug);
         } else {
             Controller::redirect('/post/index');

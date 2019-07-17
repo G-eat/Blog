@@ -11,6 +11,7 @@ class AdminController extends Controller {
 
       public function __construct($params = null) {
          $user = new User();
+
          $user->isSetRemmember_me();
 
          $this->params = $params;
@@ -25,7 +26,8 @@ class AdminController extends Controller {
 
       public function categories() {
         $database = new Database();
-        $data = $database->getAll('categories');
+
+        $data = $database->select(['*'],['categories']);
 
         $this->view('admin\categories',[
           'categories' => $data
@@ -35,7 +37,8 @@ class AdminController extends Controller {
 
       public function users() {
         $database = new Database();
-        $data = $database->getAll('users');
+
+        $data = $database->select(['*'],['users']);
 
         $this->view('admin\users',[
           'users' => $data
@@ -45,6 +48,7 @@ class AdminController extends Controller {
 
       public function articles() {
         $admin = new Admin();
+
         $data = $admin->getAllArticlesByPosition();
 
         $this->view('admin\articles',[
@@ -55,6 +59,7 @@ class AdminController extends Controller {
 
       public function position() {
           $admin = new Admin();
+
           $positions = $_POST['positions'];
 
           $num = 1;
@@ -76,7 +81,8 @@ class AdminController extends Controller {
 
       public function comments() {
         $database = new Database();
-        $comments = $database->getAll('comments');
+
+        $comments = $database->select(['*'],['comments']);
 
         $this->view('admin\comments',[
           'comments' => $comments
@@ -88,12 +94,13 @@ class AdminController extends Controller {
       public function accept() {
           $admin = new Admin();
           $message = new Message();
+
           $is_accepted = $_POST['is_accepted'];
           $id = $_POST['id'];
 
           $message->setMsg('You create task.','success');
-
           $admin->updateCommentIsAccepted($is_accepted,$id);
+
           Controller::redirect('/admin/comments');
       }
 
@@ -105,7 +112,8 @@ class AdminController extends Controller {
 
       public function tags() {
           $database = new Database;
-          $tags = $database->getAll('tags');
+          
+          $tags = $database->select(['*'],['tags']);
 
           $this->view('admin\tags',[
             'tags' => $tags

@@ -11,7 +11,7 @@ class Tag {
 
     public function updateTagNameInArticlesTagTable($tag_name) {
         $database = new Database();
-         return $database->update(['articles_tag'],[['tag_name','=',"'empty'"]],[['tag_name','=',"'".$tag_name."'"]]);
+        return $database->update(['articles_tag'],[['tag_name','=',"'empty'"]],[['tag_name','=',"'".$tag_name."'"]]);
     }
 
     public function deleteTag($tag_id) {
@@ -20,8 +20,8 @@ class Tag {
     }
 
     public function create() {
-        $tag = new Tag();
         $message = new Message();
+
         if (!isset($_SESSION['admin'])) {
           $message->setMsg("Your're not unauthorized.",'error');
           Controller::redirect('/post/index');
@@ -29,7 +29,7 @@ class Tag {
           if (isset($_POST['submit'])) {
             if ($_POST['add_tag'] !== '') {
               $message->setMsg("You create new tag.",'success');
-              $tag->insertTag($_POST['add_tag']);
+              $this->insertTag($_POST['add_tag']);
             }
             Controller::redirect('/admin/tags');
           }
@@ -37,17 +37,18 @@ class Tag {
     }
 
     public function delete() {
-        $tag = new Tag();
         $message = new Message();
+
         if (!isset($_SESSION['admin'])) {
-        Controller::redirect('/post/index');
+          Controller::redirect('/post/index');
         } else {
-        if ($_POST['tag_name'] !== '') {
-          $message->setMsg("Your're deleted tag.",'error');
-          $tag->updateTagNameInArticlesTagTable($_POST['tag_name']);
-          $tag->deleteTag($_POST['tag_id']);
-        }
-        Controller::redirect('/admin/tags');
+          if ($_POST['tag_name'] !== '') {
+            $this->updateTagNameInArticlesTagTable($_POST['tag_name']);
+            $this->deleteTag($_POST['tag_id']);
+
+            $message->setMsg("Your're deleted tag.",'error');
+          }
+          Controller::redirect('/admin/tags');
         }
     }
 
