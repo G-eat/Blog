@@ -1,5 +1,13 @@
 <?php
 
+namespace App\Models;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Core\Data;
+use App\Core\Message;
+use App\Core\Token;
+
 /**
  *  Post
  */
@@ -281,7 +289,7 @@ class User {
       $database = new Database();
 
       $data = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
-      
+
       return $data[0];
     }
 

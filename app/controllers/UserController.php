@@ -1,5 +1,11 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Models\User;
+
 /**
  * homeController
  */

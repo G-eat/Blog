@@ -1,4 +1,12 @@
 <?php
+
+namespace App\Models;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Core\Data;
+use App\Core\Message;
+
 /**
  * articles/post
  */

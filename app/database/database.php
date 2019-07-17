@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Database;
+
+use App\Core\DBinterface;
+use \PDO;
+
 /**
  *  Database
  */

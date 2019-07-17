@@ -1,5 +1,13 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Models\User;
+use App\Models\Admin;
+use App\Core\Message;
+
 if (!isset($_SESSION['admin'])) {
     Controller::redirect('/post/index');
 }
@@ -112,7 +120,7 @@ class AdminController extends Controller {
 
       public function tags() {
           $database = new Database;
-          
+
           $tags = $database->select(['*'],['tags']);
 
           $this->view('admin\tags',[

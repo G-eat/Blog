@@ -1,4 +1,11 @@
 <?php
+
+namespace App\Models;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Core\Message;
+
 /**
  * Tag
  */

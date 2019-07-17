@@ -1,5 +1,15 @@
 <?php
 
+namespace App\Core;
+
+use App\Core\View;
+use App\Controllers\AdminController;
+use App\Controllers\CategoryController;
+use App\Controllers\CommentController;
+use App\Controllers\PostController;
+use App\Controllers\TagController;
+use App\Controllers\UserController;
+
   /**
    * Controller
    */

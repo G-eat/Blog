@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 class Message {
 
 	public static function setMsg($text ='', $type = '') {

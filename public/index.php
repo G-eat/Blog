@@ -14,4 +14,4 @@ spl_autoload_register( 'spl_autoload', false );
 
 session_start();
 
-new Router;
+new App\Core\Router();

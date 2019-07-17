@@ -1,4 +1,11 @@
 <?php
+
+namespace App\Models;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Core\Message;
+
 if (!isset($_SESSION['admin'])) {
   Controller::redirect('/post/index');
 }
@@ -54,7 +61,7 @@ class Admin {
         $database->delete(['articles'],[['id','=',"'".$id."'"]]);
 
         $message->setMsg('You delete article.','error');
-        
+
         Controller::redirect('/admin/articles');
     }
 

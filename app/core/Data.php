@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 class Data {
 
 	public static function setData($text, $type) {

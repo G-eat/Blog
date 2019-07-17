@@ -1,4 +1,11 @@
 <?php
+
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Models\User;
+use App\Models\Comment;
+
 /**
  * Comment
  */
@@ -24,7 +31,7 @@ class CommentController extends Controller {
 
         if ((isset($_SESSION['user']) && $_SESSION['user'] === $data[0]['author']) || isset($_SESSION['admin'])) {
             $comment->deleteById($id);
-            
+
             Controller::redirect('/post/individual/'.$slug);
         } else {
             Controller::redirect('/post/index');

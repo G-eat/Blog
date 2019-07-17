@@ -1,4 +1,11 @@
 <?php
+
+namespace App\Models;
+
+use App\Core\Controller;
+use App\Database\Database;
+use App\Core\Message;
+
 /**
  * Category
  */
@@ -55,7 +62,7 @@ class Category {
 
     public function delete() {
         $message = new Message();
-        
+
         if ($_POST['category_id'] !== '') {
           $this->deleteCategory($_POST['category_id']);
           $message->setMsg("Your're deleted category.",'error');

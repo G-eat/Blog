@@ -1,5 +1,12 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Models\User;
+use App\Models\Category;
+use App\Core\Message;
+
 if (!isset($_SESSION['admin'])) {
     $message = new Message();
 
