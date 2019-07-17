@@ -1,4 +1,9 @@
 <?php
+
+  use App\Core\Data;
+
+  $data = new Data;
+
   include '../app/views/include/header.php';
   include '../app/views/include/messages.php';
 
@@ -21,7 +26,7 @@
         <div class="row">
           <div class="form-group col-6">
             <label class="text-info" for="exampleInputTitle">Title :</label>
-            <input type="text" class="form-control" aria-describedby="titleHelp" name="title" placeholder="Post title" value="<?php echo isset($_SESSION['title']) ? Data::display('title') :'' ?>" required minlength=3>
+            <input type="text" class="form-control" aria-describedby="titleHelp" name="title" placeholder="Post title" value="<?php echo isset($_SESSION['title']) ? $data->display('title') :'' ?>" required minlength=3>
             <?php
                 if (isset($_SESSION['title'])) {
                     unset($_SESSION['title']);
@@ -30,12 +35,12 @@
           </div>
           <div class="form-group col-6">
             <label class="text-info" for="exampleInputSlug">Slug :</label>
-            <input type="text" class="form-control" aria-describedby="slugHelp" name="slug" placeholder="Post slug" value="<?php echo isset($_SESSION['slug']) ? Data::display('slug') :'' ?>" required minlength=3>
+            <input type="text" class="form-control" aria-describedby="slugHelp" name="slug" placeholder="Post slug" value="<?php echo isset($_SESSION['slug']) ? $data->display('slug') :'' ?>" required minlength=3>
           </div>
         </div>
         <div class="form-group">
           <label class="text-info" for="exampleFormControlTextarea1">Body :</label>
-          <textarea class="form-control" id="exampleFormControlTextarea1" name="body-editor1" rows="5" placeholder="Post body"><?php echo isset($_SESSION['body']) ? Data::display('body') :'' ?></textarea>
+          <textarea class="form-control" id="exampleFormControlTextarea1" name="body-editor1" rows="5" placeholder="Post body"><?php echo isset($_SESSION['body']) ? $data->display('body') :'' ?></textarea>
         </div>
         <div class="form-group">
           <label class="text-info" for="exampleFormControlSelect1">Category :</label>

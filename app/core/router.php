@@ -25,10 +25,10 @@ class Router {
     // var_dump($userco);
 
     if (file_exists(CONTROLLER. $this->controller.'.php')) {
-        // $that = $this;
-        echo '<br>'.$this->controller.'<br>';
-        // var_dump($this->controller($this->params));
-        // die();
+       // $that = $this;
+       echo '<br>'.$this->controller.'<br>';
+       var_dump($this->controller);
+       // die();
        $this->controller = new $this->controller($this->params);
 
        if (empty($this->controller)) {
@@ -46,6 +46,11 @@ class Router {
        header("Location: /post/index",true,303);
        exit;
      }
+  }
+
+  public static function controller($value='')
+  {
+      echo 123;
   }
 
   protected function prepareURL() {

@@ -1,7 +1,10 @@
 <?php
+
+  use App\Core\Controller;
+  
   include '../app/views/include/header.php';
   include '../app/views/include/messages.php';
-  
+
   if (!isset($_SESSION['admin'])) {
     Controller::redirect('post/index');
   }
