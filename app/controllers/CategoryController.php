@@ -1,8 +1,9 @@
 <?php
 
     if (!isset($_SESSION['admin'])) {
-      Message::setMsg('You not authorized.','success');
-      Controller::redirect('/post/index');
+        $message = new Message();
+        $message->setMsg('You not authorized.','success');
+        Controller::redirect('/post/index');
     }
 
 /**

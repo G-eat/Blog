@@ -40,7 +40,7 @@ class Controller {
         return $this->view;
     }
 
-    public function redirect($url='') {
+    public static function redirect($url='') {
       header("Location: " . $url ,true,303);
       exit;
     }

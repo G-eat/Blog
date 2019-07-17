@@ -1,7 +1,7 @@
 <?php
 
 if (!isset($_SESSION['admin'])) {
-  Controller::redirect('/post/index');
+    Controller::redirect('/post/index');
 }
 
 /**
@@ -87,10 +87,11 @@ class AdminController extends Controller {
       //accept comment from admin and publish them
       public function accept() {
           $admin = new Admin();
+          $message = new Message();
           $is_accepted = $_POST['is_accepted'];
           $id = $_POST['id'];
 
-          Message::setMsg('You create task.','success');
+          $message->setMsg('You create task.','success');
 
           $admin->updateCommentIsAccepted($is_accepted,$id);
           Controller::redirect('/admin/comments');

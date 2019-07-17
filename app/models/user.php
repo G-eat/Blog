@@ -9,11 +9,13 @@ class User {
   // if is set remmember me log in
   public function isSetRemmember_me() {
     $user = new User();
+    $database = new Database();
+    $userController = new UserController();
     $cookie = $_COOKIE['remmember_me'] ?? false;
 
     if ($cookie) {
-      $data = Database::select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
-      $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
+      $data = $database->select(['*'],['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+      $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$data[0]['user_name']."'"],['AND'],['admin','=','1']]);
       $isExpireToken = $user->isExpireToken($data[0]['expire_at']);
 
       if ($data_admin[0]['username'] !== ''  && !$isExpireToken) {
@@ -23,7 +25,7 @@ class User {
       if ( $data[0]['user_name'] !== ''  && !$isExpireToken) {
          $_SESSION['user'] = $data[0]['user_name'];
       } else {
-         UserController::logout();
+         $userController->logout();
       }
     }
   }
@@ -35,9 +37,10 @@ class User {
   // login user
   public function logIn($password,$username,$remmeberme) {
     $user = new User();
+    $database = new Database();
     $user->validatelogin($password,$username);
 
-    $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+    $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
 
     if ($this->errors == null) {
 
@@ -61,9 +64,10 @@ class User {
 
   // validate login
   public function validateLogin($password,$username) {
+    $database = new Database();
     $password1 = md5($password);
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = "'.$username.'" AND `password` ="'. $password1.'" AND `token` =1';
-    $data = Database::raw($mysql);
+    $data = $database->raw($mysql);
 
     if ($data[0] !== '1' ) {
       $this->errors[] ='Incorrect Password or you not verify your email.';
@@ -73,6 +77,7 @@ class User {
   // remmember me
   public function remmmemberLogin($username) {
     $token = new Token();
+    $database = new Database();
     $hash_token = $token->getHash();
 
     $expiry_token = time() + 60 * 60 * 24 * 7;
@@ -80,8 +85,8 @@ class User {
 
     setcookie('remmember_me' , $hash_token , $expiry_token , '/');
 
-    Database::insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expire_at."'"]);
-    $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+    $database->insert(['remmember_me'],['token_hash','user_name','expire_at'],["'".$hash_token."'","'".$username."'","'".$expire_at."'"]);
+    $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
     //if is admin set session admin to his name
     if ($data_admin[0]['username'] !== '') {
       $_SESSION['admin'] = $data_admin[0]['username'];
@@ -93,6 +98,9 @@ class User {
   // register user /create
   public function create(){
     $user = new User();
+    $database = new Database();
+    $message = new Message();
+    $data = new Data();
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];
     $username = $_POST['username'];
@@ -105,15 +113,15 @@ class User {
 
       $token = $user->generateRandomString();
 
-      $data = Database::insert(['users'],['username','email','password','token'],["'".$username."'","'".$email."'","'".$md5password."'","'".$token."'"]);
+      $data = $database->insert(['users'],['username','email','password','token'],["'".$username."'","'".$email."'","'".$md5password."'","'".$token."'"]);
 
       $user->sendMail($username,$email,$token);
 
-      Message::setMsg('You need to verify with email.','success');
+      $message->setMsg('You need to verify with email.','success');
       Controller::redirect('/user/login');
     } else {
-        Data::setData($_POST['username'],'username');
-        Data::setData($_POST['email'],'email');
+        $data->setData($_POST['username'],'username');
+        $data->setData($_POST['email'],'email');
 
         Controller::redirect('/user/register');
     }
@@ -121,30 +129,32 @@ class User {
 
   // validate register
   public function validateRegister($password,$confirmpassword,$username,$email) {
+    $database = new Database();
+    $message = new Message();
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `username` = '."'".$username."'";
     $mysql2 = 'SELECT COUNT(*) FROM `users` WHERE `email` = '."'".$email."'";
 
-    $data = Database::raw($mysql);
-    $data2 = Database::raw($mysql2);
+    $data = $database->raw($mysql);
+    $data2 = $database->raw($mysql2);
 
     if ($data[0] == 1) {
       $this->errors[] ='This username is used.';
-      Message::setMsg('This username is use.','error');
+      $message->setMsg('This username is use.','error');
     }
 
     if ($data2[0] == 1) {
       $this->errors[] ='This email is used.';
-      Message::setMsg('This email is use.','error1');
+      $message->setMsg('This email is use.','error1');
     }
 
     if ($confirmpassword === $password) {
       if (strlen($password) >= 20 || strlen($password) <= 7) {
         $this->errors[] ='Your password must have between 8-16 characters.';
-        Message::setMsg('Your password must have between 8-16 characters.','error2');
+        $message->setMsg('Your password must have between 8-16 characters.','error2');
       }
     } else {
       $this->errors[] ='Not same Password-Confirm Password.';
-      Message::setMsg('Not same Password-Confirm Password.','error3');
+      $message->setMsg('Not same Password-Confirm Password.','error3');
     }
   }
 
@@ -184,15 +194,16 @@ class User {
 
   //confirm email with link
   public function confirmationToken($username,$token) {
+    $database = new Database();
     $mysql = 'SELECT COUNT(*) FROM `users` WHERE `token` ='."'".$token."'".' AND `username` = '."'".$username."'";
     // $data = USER::confirmToken($mysql,$token,$username);
-    $data = Database::raw($mysql);
+    $data = $database->raw($mysql);
 
     if ($data[0] == 1) {
-      Database::update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
+      $database->update(['users'],[['token','=','1']],[['username','=',"'".$username."'"]]);
 
       session_regenerate_id(true);
-      $data_admin = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
+      $data_admin = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"],['AND'],['admin','=','1']]);
       //if is admin set session admin to his name
       if ($data_admin[0]['username'] !== '') {
         $_SESSION['admin'] = $data_admin[0]['username'];
@@ -208,13 +219,14 @@ class User {
     //reset password form to get email
     public function reset() {
       $user = new User();
+      $database = new Database();
       $token = $user->generateRandomString();
 
-      $data = Database::select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
+      $data = $database->select(['*'],['users'],[['email','LIKE',"'".$_POST['email']."'"]]);
 
       if ($data[0]['username']) {
         $user->sendResetMail($data[0]['username'],$data[0]['email'],$token);
-        Database::insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
+        $database->insert(['reset_password'],['user_name','reset_token'],["'".$data[0]['username']."'","'".$token."'"]);
       }
     }
 
@@ -253,13 +265,15 @@ class User {
 
     //reset password see if token exists
     public function tokenExist($token) {
-      $data = Database::select(['*'],['reset_password'],[['reset_token','LIKE',"'".$token."'"]]);
+      $database = new Database();
+      $data = $database->select(['*'],['reset_password'],[['reset_token','LIKE',"'".$token."'"]]);
       return $data[0];
     }
 
     //reset password see if user exists
     public function userExist($username) {
-      $data = Database::select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
+      $database = new Database();
+      $data = $database->select(['*'],['users'],[['username','LIKE',"'".$username."'"]]);
       return $data[0];
     }
 
@@ -288,7 +302,8 @@ class User {
     }
 
     public function deleteCookie($cookie) {
-        return Database::delete(['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
+        $database = new Database();
+        return $database->delete(['remmember_me'],[['token_hash','LIKE',"'".$cookie."'"]]);
     }
 
 
