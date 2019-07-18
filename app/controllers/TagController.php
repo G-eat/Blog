@@ -14,7 +14,7 @@ class TagController extends Controller {
        $user->isSetRemmember_me();
 
        $this->params = $params;
-       $this->model = 'Tag';
+       $this->model = 'App\Models\Tag';
        parent::__construct($params);
     }
 }

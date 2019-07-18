@@ -24,7 +24,7 @@ class CategoryController extends Controller {
            $user->isSetRemmember_me();
 
            $this->params = $params;
-           $this->model = 'Category';
+           $this->model = 'App\Models\Category';
            parent::__construct($params);
         }
 

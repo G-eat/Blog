@@ -16,7 +16,7 @@ class CommentController extends Controller {
        $user->isSetRemmember_me();
 
        $this->params = $params;
-       $this->model = 'Comment';
+       $this->model = 'App\Models\Comment';
        parent::__construct($params);
     }
 

@@ -18,7 +18,7 @@ class PostController extends Controller {
         $user->isSetRemmember_me();
 
         $this->params = $params;
-        $this->model = 'Post';
+        $this->model = 'App\Models\Post';
         parent::__construct($params);
      }
 

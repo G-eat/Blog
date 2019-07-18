@@ -9,7 +9,8 @@ use App\Controllers\CommentController;
 use App\Controllers\PostController;
 use App\Controllers\TagController;
 use App\Controllers\UserController;
-use \App\Models\User;
+use App\Models\User;
+use App\Models\Post;
 
   /**
    * Controller

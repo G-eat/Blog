@@ -199,9 +199,9 @@ class Post {
         $data = new Data();
 
         $slug = "'".$this->slug($_POST['slug'])."'";
-        $data = $this->seeIfArticleSlugExist($slug);
+        $check = $this->seeIfArticleSlugExist($slug);
 
-        if ($data[0] == 1) {
+        if ($check[0] == 1) {
             $data->setData($_POST['title'],'title');
             $data->setData($this->slug($_POST['slug']),'slug');
             $data->setData($_POST['body-editor1'],'body');

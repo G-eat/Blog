@@ -23,7 +23,7 @@ class AdminController extends Controller {
          $user->isSetRemmember_me();
 
          $this->params = $params;
-         $this->model = 'Admin';
+         $this->model = 'App\Models\Admin';
          parent::__construct($params);
       }
 
@@ -113,6 +113,8 @@ class AdminController extends Controller {
       }
 
       public function post($id) {
+          $admin = new Admin();
+          
           $data = $admin->getArticleById($id);
 
           Controller::redirect('/post/individual/'.$data[0]['slug']);

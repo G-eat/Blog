@@ -7,6 +7,7 @@ use App\Database\Database;
 use App\Core\Data;
 use App\Core\Message;
 use App\Core\Token;
+use App\Controllers\UserController;
 
 /**
  *  Post

@@ -14,27 +14,15 @@ use App\Controllers\UserController;
  * Router class
  */
 class Router {
-    // public function __construct($value='')
-    // {
-    //     echo trim( $_SERVER['REQUEST_URI'],'/' );
-    // }
   protected $controller = 'PostController';
   protected $action = 'index';
   protected $params = [];
+  protected $controller_name = '';
 
   public function __construct() {
     $this->prepareURL();
-    echo dirname( __DIR__ );
-    // die();
 
-    // $userco = new \App\Controllers\UserController;
-    // var_dump($userco);
-
-    if (file_exists(dirname( __DIR__ ).'\controllers\\'. $this->controller.'.php')) {
-       // $that = $this;
-       echo '<br>'.$this->controller.'<br>';
-       var_dump($this->controller);
-       // die();
+    if (file_exists(dirname( __DIR__ ).'\controllers\\'. $this->controller_name.'.php')) {
        $this->controller = new $this->controller($this->params);
 
        if (empty($this->controller)) {
@@ -54,18 +42,14 @@ class Router {
      }
   }
 
-  public static function controller($value='')
-  {
-      echo 12;
-      die();
-  }
 
   protected function prepareURL() {
     $request = trim( $_SERVER['REQUEST_URI'],'/' );
 
     if (!empty( $request )) {
       $url = explode( '/',$request );
-      $this->controller = isset( $url[0]) ? ucfirst($url[0]).'Controller' : 'PostController';
+      $this->controller_name = isset( $url[0]) ? ucfirst($url[0]).'Controller' : 'PostController';
+      $this->controller = isset( $url[0]) ? '\App\Controllers\\'.ucfirst($url[0]).'Controller' : 'PostController';
       $this->action = isset( $url[1]) ? $url[1] : 'index';
       unset( $url[0],$url[1] );
       $this->params = !empty($url) ? array_values($url) : [];

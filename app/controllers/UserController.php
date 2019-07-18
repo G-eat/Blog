@@ -16,7 +16,7 @@ class UserController extends Controller {
        $user->isSetRemmember_me();
 
        $this->params = $params;
-       $this->model = 'User';
+       $this->model = 'App\Models\User';
        parent::__construct($params);
     }
 
